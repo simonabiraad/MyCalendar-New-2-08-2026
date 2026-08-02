@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notification_widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/calendar_logo_bg"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/notif_widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Notifications"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/notif_widget_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No active alerts."
+        android:textColor="@color/black"
+        android:textSize="11sp"
+        android:paddingTop="12dp"
+        android:gravity="center"/>
+
+</LinearLayout>

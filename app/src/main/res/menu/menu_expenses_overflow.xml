@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_category"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="@string/category_title" />
+    <item
+        android:id="@+id/action_notes"
+        android:title="@string/menu_notes" />
+    <item
+        android:id="@+id/action_date"
+        android:title="@string/menu_date" />
+    <item
+        android:id="@+id/action_date_range"
+        android:title="@string/menu_select_date_range" />
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_date_asc"
+            android:title="@string/menu_date_ascending" />
+        <item
+            android:id="@+id/action_date_desc"
+            android:title="@string/menu_date_descending" />
+    </group>
+
+    <item
+        android:id="@+id/action_cash_in"
+        android:title="@string/menu_cash_in" />
+    <item
+        android:id="@+id/action_cash_out"
+        android:title="@string/menu_cash_out" />
+    <item
+        android:id="@+id/action_print"
+        android:title="@string/menu_print" />
+    <item
+        android:id="@+id/action_name"
+        android:title="@string/menu_your_name" />
+    <item
+        android:id="@+id/action_address"
+        android:title="@string/menu_address" />
+</menu>

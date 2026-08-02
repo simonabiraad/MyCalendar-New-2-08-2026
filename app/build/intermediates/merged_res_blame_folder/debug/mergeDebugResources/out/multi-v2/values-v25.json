@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.mycalendar2026sar.app-mergeDebugResources-36:/values-v25/values-v25.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\caches\\9.4.1\\transforms\\9c317d6bd77e97561a319c2fe6d89029\\transformed\\appcompat-1.6.1\\res\\values-v25\\values-v25.xml",
+                    "from": {
+                        "startLines": "2,3,4,6",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,126,209,308",
+                        "endLines": "2,3,5,7",
+                        "endColumns": "70,82,12,12",
+                        "endOffsets": "121,204,303,414"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="?attr/selectableItemBackground">
+
+        <!-- Normal Mode Icon -->
+        <ImageView
+            android:id="@+id/accountIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_agenda"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="Account Icon"
+            app:tint="@android:color/black" />
+
+        <!-- Edit Mode: Reorder Up -->
+        <ImageButton
+            android:id="@+id/btnMoveUp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/arrow_up_float"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:contentDescription="Move Up" />
+
+        <!-- Edit Mode: Reorder Down -->
+        <ImageButton
+            android:id="@+id/btnMoveDown"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/arrow_down_float"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:contentDescription="Move Down" />
+
+        <TextView
+            android:id="@+id/accountName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Account Name"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:layout_marginStart="8dp" />
+
+        <TextView
+            android:id="@+id/accountBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black" />
+
+        <!-- Edit Mode: Delete -->
+        <ImageButton
+            android:id="@+id/btnDeleteAccount"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Delete Account"
+            app:tint="@color/light_green" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="48dp"
+        android:background="@android:color/darker_gray" />
+
+</LinearLayout>

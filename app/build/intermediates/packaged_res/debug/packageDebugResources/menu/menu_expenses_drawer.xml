@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_remove_ads"
+        android:icon="@android:drawable/ic_menu_close_clear_cancel"
+        android:title="@string/menu_remove_ads" />
+    <item
+        android:id="@+id/nav_summary"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/menu_summary" />
+    <item
+        android:id="@+id/nav_account_summary"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="@string/menu_account_summary" />
+    <item
+        android:id="@+id/nav_transaction_all"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="@string/menu_transaction_all_accounts" />
+    <item
+        android:id="@+id/nav_accounts"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/menu_accounts" />
+    <item
+        android:id="@+id/nav_transfer"
+        android:icon="@android:drawable/ic_menu_share"
+        android:title="@string/transfer" />
+    <item
+        android:id="@+id/nav_report_all"
+        android:icon="@android:drawable/ic_menu_report_image"
+        android:title="@string/menu_report_all_accounts" />
+    <item
+        android:id="@+id/nav_transaction_names"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/menu_transaction_names" />
+    <item
+        android:id="@+id/nav_notebook"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="@string/menu_notebook" />
+    <item
+        android:id="@+id/nav_calendar"
+        android:icon="@android:drawable/ic_menu_today"
+        android:title="@string/menu_calendar" />
+    <item
+        android:id="@+id/nav_cash_calculator"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/menu_cash_calculator" />
+    <item
+        android:id="@+id/nav_backup_restore"
+        android:icon="@android:drawable/ic_menu_save"
+        android:title="@string/menu_backup_restore" />
+    <item
+        android:id="@+id/nav_setting"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="@string/menu_setting" />
+    <item
+        android:id="@+id/nav_deleted_transactions"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/menu_deleted_transactions" />
+    <item
+        android:id="@+id/nav_rate_us"
+        android:icon="@android:drawable/btn_star"
+        android:title="@string/menu_rate_us" />
+    <item
+        android:id="@+id/nav_recommend"
+        android:icon="@android:drawable/ic_menu_send"
+        android:title="@string/menu_recommend" />
+</menu>

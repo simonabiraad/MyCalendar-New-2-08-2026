@@ -1,0 +1,594 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ExpensesActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/expenses_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+        <ImageButton
+            android:id="@+id/expensesMenuButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/menu_content_description"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <Button
+            android:id="@+id/topExpensesButton"
+            android:layout_width="100dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/light_green"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="@string/expenses"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/expensesMenuButton"
+            app:layout_constraintStart_toEndOf="@id/expensesMenuButton"
+            app:layout_constraintTop_toTopOf="@id/expensesMenuButton" />
+
+        <ImageButton
+            android:id="@+id/expensesExportButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/export_options_description"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_save"
+            app:layout_constraintBottom_toBottomOf="@id/expensesSearchView"
+            app:layout_constraintEnd_toStartOf="@id/expensesSearchView"
+            app:layout_constraintTop_toTopOf="@id/expensesSearchView"
+            app:tint="@color/white" />
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/expensesSearchView"
+            android:layout_width="47dp"
+            android:layout_height="33dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_search_bg"
+            app:iconifiedByDefault="false"
+            app:layout_constraintEnd_toStartOf="@id/expensesOverflowButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:queryHint="@string/search_expenses_hint" />
+
+        <ImageButton
+            android:id="@+id/expensesOverflowButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/more_options_description"
+            android:src="@android:drawable/ic_menu_more"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/expensesButtonContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/expensesSearchView">
+
+            <Button
+                android:id="@+id/allButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/light_green"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="@string/all_expenses"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/dailyButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/green"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="@string/label_daily"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/weeklyButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="@string/label_weekly"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/monthlyButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/holo_blue_dark"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="@string/label_monthly"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+            <Button
+                android:id="@+id/yearlyButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:backgroundTint="@android:color/holo_purple"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="@string/yearly"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/subExpensesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/expensesButtonContainer">
+
+            <Button
+                android:id="@+id/subAllButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:backgroundTint="@color/gray"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="All"
+                android:textAllCaps="false"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/subDailyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/subExpensesContainer">
+
+            <Button
+                android:id="@+id/subTodayButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:backgroundTint="@color/light_green"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="@string/label_today"
+                android:textAllCaps="false"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/subWeeklyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/subDailyContainer">
+
+            <Button
+                android:id="@+id/subWeeklyRangeButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:backgroundTint="@android:color/holo_orange_light"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="27-07-2026 to 02-08-2026"
+                android:textAllCaps="false"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/subMonthlyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/subWeeklyContainer">
+
+            <Button
+                android:id="@+id/subMonthlyRangeButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:backgroundTint="@android:color/holo_blue_dark"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="01-07-2026 to 31-07-2026"
+                android:textAllCaps="false"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/subYearlyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/subMonthlyContainer">
+
+            <Button
+                android:id="@+id/subYearlyRangeButton"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:backgroundTint="@android:color/holo_purple"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                android:text="01-01-2026 to 31-12-2026"
+                android:textAllCaps="false"
+                android:textSize="11sp"
+                app:cornerRadius="20dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tableHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#333333"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/subYearlyContainer">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Description"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="#555555" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="Cash In"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="#555555" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="Cash Out"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="#555555" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="Balance"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transactionsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@id/cashButtonsContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tableHeader"
+            tools:listitem="@layout/item_transaction_row" />
+
+        <TextView
+            android:id="@+id/emptyStateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No transactions yet"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/transactionsRecyclerView"
+            app:layout_constraintEnd_toEndOf="@id/transactionsRecyclerView"
+            app:layout_constraintStart_toStartOf="@id/transactionsRecyclerView"
+            app:layout_constraintTop_toTopOf="@id/transactionsRecyclerView" />
+
+        <LinearLayout
+            android:id="@+id/cashButtonsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            app:layout_constraintBottom_toTopOf="@id/totalsFooterContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/cashInButton"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/light_green"
+                android:text="@string/menu_cash_in"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="30dp" />
+
+            <Button
+                android:id="@+id/cashOutButton"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/chili_red"
+                android:text="@string/menu_cash_out"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="30dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/totalsFooterContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/summary_border"
+            android:orientation="vertical"
+            android:layout_margin="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="4dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TOTAL Cash In"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/cashInTotalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/income_green"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:text="0.00" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TOTAL Cash Out"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/cashOutTotalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/expense_red"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:text="0.00" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Balance"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/balanceTotalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:text="0.00" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#333333"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp" />
+
+            <LinearLayout
+                android:id="@+id/previousBalanceRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Previous Balance"
+                    android:textColor="@color/light_green"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/previousBalanceTotalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.00"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/finalBalanceRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Final Balance"
+                    android:textColor="@color/light_green"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/finalBalanceTotalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.00"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/expensesNavigationView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header_expenses"
+        app:menu="@menu/menu_expenses_drawer" >
+
+    </com.google.android.material.navigation.NavigationView>
+
+</androidx.drawerlayout.widget.DrawerLayout>

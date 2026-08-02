@@ -112,32 +112,72 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/categoryScrollView">
 
-        <EditText
-            android:id="@+id/noteTitleInput"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Title (Name)"
-            android:inputType="text"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:background="@drawable/summary_border"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-        <EditText
-            android:id="@+id/noteContentInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Enter note..."
-            android:inputType="textMultiLine"
-            android:gravity="start|top"
-            android:minLines="1"
-            android:maxLines="3"
-            android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            <EditText
+                android:id="@+id/noteTitleInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="Title (Name)"
+                android:inputType="text"
+                android:padding="8dp"
+                android:textColor="@color/white"
+                android:textColorHint="#AAAAAA"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="#333333" />
+
+            <EditText
+                android:id="@+id/noteContentInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="start|top"
+                android:hint="Enter note..."
+                android:inputType="textMultiLine"
+                android:maxLines="3"
+                android:minLines="1"
+                android:padding="8dp"
+                android:textColor="@color/white"
+                android:textColorHint="#AAAAAA"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingEnd="4dp"
+                android:paddingBottom="4dp">
+
+                <ImageButton
+                    android:id="@+id/sbVoiceNoteButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Voice Note"
+                    android:src="@android:drawable/ic_btn_speak_now"
+                    app:tint="@color/light_green" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/moveCategoryLeftButton"

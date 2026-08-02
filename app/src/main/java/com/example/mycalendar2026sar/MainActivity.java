@@ -265,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
             popup.getMenu().add("Secure Box");
             popup.getMenu().add("Change Password");
             popup.getMenu().add("Notification Settings");
+            popup.getMenu().add("Toggle Quick Note Bar");
             popup.getMenu().add("Change Colors");
             popup.getMenu().add("Change Font");
             popup.getMenu().add("Backup Data");
@@ -288,6 +289,8 @@ public class MainActivity extends AppCompatActivity {
                     showChangePasswordDialog();
                 } else if (title.equals("Notification Settings")) {
                     findViewById(R.id.notificationSettingsButton).performClick();
+                } else if (title.equals("Toggle Quick Note Bar")) {
+                    toggleQuickNoteBar();
                 } else if (title.equals("Change Colors")) {
                     showChangeColorsDialog();
                 } else if (title.equals("Change Font")) {
@@ -337,6 +340,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
         createNotificationChannel();
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent == null || intent.getAction() == null) return;
+        
+        if (QuickNoteNotificationService.ACTION_VOICE.equals(intent.getAction())) {
+            currentDialogInput = null;
+            startVoiceRecognition();
+        } else if (QuickNoteNotificationService.ACTION_NOTE.equals(intent.getAction())) {
+            currentDialogInput = null;
+            showNewNoteDialog("");
+        }
     }
 
     @Override
@@ -2160,6 +2183,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         webView.loadDataWithBaseURL(null, htmlContent, "text/HTML", "UTF-8", null);
+    }
+
+    private void toggleQuickNoteBar() {
+        boolean isEnabled = securityPrefs.getBoolean("quick_note_bar_enabled", false);
+        isEnabled = !isEnabled;
+        securityPrefs.edit().putBoolean("quick_note_bar_enabled", isEnabled).apply();
+
+        Intent serviceIntent = new Intent(this, QuickNoteNotificationService.class);
+        if (isEnabled) {
+            startForegroundService(serviceIntent);
+            Toast.makeText(this, "Quick Note Bar Enabled", Toast.LENGTH_SHORT).show();
+        } else {
+            stopService(serviceIntent);
+            Toast.makeText(this, "Quick Note Bar Disabled", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void createNotificationChannel() {

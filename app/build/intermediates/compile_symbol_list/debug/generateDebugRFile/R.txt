@@ -90,6 +90,7 @@ int id btnCalcSub 0x0
 int id btnCalculator 0x0
 int id btnCashIn 0x0
 int id btnCashOut 0x0
+int id btnDelete 0x0
 int id btnDeleteAccount 0x0
 int id btnMoveDown 0x0
 int id btnMoveUp 0x0
@@ -198,8 +199,9 @@ int id noteTitleInput 0x0
 int id notesContainer 0x0
 int id notesScrollView 0x0
 int id notesSection 0x0
+int id notif_note_area 0x0
+int id notif_voice_btn 0x0
 int id notif_widget_text 0x0
-int id notif_widget_title 0x0
 int id notificationSettingsButton 0x0
 int id notification_widget_root 0x0
 int id prevMonth 0x0
@@ -210,6 +212,7 @@ int id remarkHistoryTitle 0x0
 int id remarkLabel 0x0
 int id saveNoteButton 0x0
 int id saveStickyNoteButton 0x0
+int id sbVoiceNoteButton 0x0
 int id secureBoxButton 0x0
 int id secureBoxTitle 0x0
 int id selectionBar 0x0

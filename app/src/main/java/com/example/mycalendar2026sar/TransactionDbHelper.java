@@ -89,6 +89,49 @@ public class TransactionDbHelper extends SQLiteOpenHelper {
         db.delete(TABLE_TRANSACTIONS, COL_ID + "=?", new String[]{String.valueOf(id)});
     }
 
+    public void updateTransaction(long id, String title, double amount, String type, long timestamp, String account, String notes, String voicePath, String bills) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_TITLE, title);
+        values.put(COL_AMOUNT, amount);
+        values.put(COL_TYPE, type);
+        values.put(COL_TIMESTAMP, timestamp);
+        values.put(COL_ACCOUNT, account);
+        values.put(COL_NOTES, notes);
+        values.put(COL_VOICE_PATH, voicePath);
+        values.put(COL_BILLS, bills);
+        db.update(TABLE_TRANSACTIONS, values, COL_ID + "=?", new String[]{String.valueOf(id)});
+    }
+
+    public void updateTransactionNote(long id, String newNote) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COL_NOTES, newNote);
+        db.update(TABLE_TRANSACTIONS, values, COL_ID + "=?", new String[]{String.valueOf(id)});
+    }
+
+    public Transaction getTransactionById(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query(TABLE_TRANSACTIONS, null, COL_ID + "=?", new String[]{String.valueOf(id)}, null, null, null);
+        if (c != null && c.moveToFirst()) {
+            Transaction t = new Transaction(
+                    c.getLong(c.getColumnIndexOrThrow(COL_ID)),
+                    c.getString(c.getColumnIndexOrThrow(COL_TITLE)),
+                    c.getDouble(c.getColumnIndexOrThrow(COL_AMOUNT)),
+                    c.getString(c.getColumnIndexOrThrow(COL_TYPE)),
+                    c.getLong(c.getColumnIndexOrThrow(COL_TIMESTAMP)),
+                    c.getString(c.getColumnIndexOrThrow(COL_ACCOUNT)),
+                    c.getString(c.getColumnIndexOrThrow(COL_NOTES)),
+                    c.getString(c.getColumnIndexOrThrow(COL_VOICE_PATH)),
+                    c.getString(c.getColumnIndexOrThrow(COL_BILLS))
+            );
+            c.close();
+            return t;
+        }
+        if (c != null) c.close();
+        return null;
+    }
+
     public void addOrUpdateMonthlyIncome(double amount) {
         SQLiteDatabase db = getWritableDatabase();
         String title = "Monthly Income";

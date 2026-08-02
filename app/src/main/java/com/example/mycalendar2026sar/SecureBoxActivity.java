@@ -1,10 +1,12 @@
 package com.example.mycalendar2026sar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.card.MaterialCardView;
@@ -53,6 +57,18 @@ public class SecureBoxActivity extends AppCompatActivity {
 
     private String activeCategoryKey = "";
     private int activeCategoryColor = 0;
+
+    private final ActivityResultLauncher<Intent> voiceRecognitionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    ArrayList<String> matches = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (matches != null && !matches.isEmpty()) {
+                        String spokenText = matches.get(0);
+                        String existingText = noteContentInput.getText().toString();
+                        noteContentInput.setText(existingText.isEmpty() ? spokenText : existingText + " " + spokenText);
+                    }
+                }
+            });
 
     private static final String SEPARATOR = "###NOTE_SEP###";
     private static final String TITLE_SEP = "###TITLE_SEP###";
@@ -217,6 +233,19 @@ public class SecureBoxActivity extends AppCompatActivity {
         findViewById(R.id.moveCategoryLeftButton).setOnClickListener(v -> moveCategory(activeCategoryKey, -1));
         findViewById(R.id.moveCategoryRightButton).setOnClickListener(v -> moveCategory(activeCategoryKey, 1));
         findViewById(R.id.addCategoryButton).setOnClickListener(v -> showAddCategoryDialog());
+        findViewById(R.id.sbVoiceNoteButton).setOnClickListener(v -> startVoiceRecognition());
+    }
+
+    private void startVoiceRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, java.util.Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak your note...");
+        try {
+            voiceRecognitionLauncher.launch(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Voice recognition not supported", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadCategories() {

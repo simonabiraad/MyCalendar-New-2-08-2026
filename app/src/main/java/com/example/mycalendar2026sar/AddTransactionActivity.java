@@ -7,6 +7,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.speech.RecognizerIntent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,17 +26,23 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class AddTransactionActivity extends AppCompatActivity {
 
     private TextView titleView, txtDate, txtTime;
-    private Button btnCashIn, btnCashOut, btnSaveExit, btnSaveContinue;
+    private Button btnCashIn, btnCashOut, btnSaveExit, btnSaveContinue, btnDelete;
     private EditText editAmount, editItems, editNotes;
     private ImageView btnCalculator, btnVoice, btnSelectCategory;
     
     private String currentType = Transaction.TYPE_CASH_IN;
+    private long editTransactionId = -1;
+    private double originalAmount = 0;
+    private String originalType = "";
+    private String originalAccount = "";
+
     private Calendar selectedDateTime = Calendar.getInstance();
     private SimpleDateFormat dateSdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
     private SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -50,6 +58,18 @@ public class AddTransactionActivity extends AppCompatActivity {
                 }
             }
     );
+
+    private final ActivityResultLauncher<Intent> voiceRecognitionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    ArrayList<String> matches = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (matches != null && !matches.isEmpty()) {
+                        String spokenText = matches.get(0);
+                        String existingText = editNotes.getText().toString();
+                        editNotes.setText(existingText.isEmpty() ? spokenText : existingText + " " + spokenText);
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +94,20 @@ public class AddTransactionActivity extends AppCompatActivity {
         btnCalculator = findViewById(R.id.btnCalculator);
         btnVoice = findViewById(R.id.btnVoice);
         btnSelectCategory = findViewById(R.id.btnSelectCategory);
+        btnDelete = findViewById(R.id.btnDelete);
         btnSaveExit = findViewById(R.id.btnSaveExit);
         btnSaveContinue = findViewById(R.id.btnSaveContinue);
 
-        String initialType = getIntent().getStringExtra("type");
-        if (Transaction.TYPE_CASH_OUT.equals(initialType)) {
-            setMode(Transaction.TYPE_CASH_OUT);
+        editTransactionId = getIntent().getLongExtra("transaction_id", -1);
+        if (editTransactionId != -1) {
+            setupEditMode();
         } else {
-            setMode(Transaction.TYPE_CASH_IN);
+            String initialType = getIntent().getStringExtra("type");
+            if (Transaction.TYPE_CASH_OUT.equals(initialType)) {
+                setMode(Transaction.TYPE_CASH_OUT);
+            } else {
+                setMode(Transaction.TYPE_CASH_IN);
+            }
         }
 
         updateDateTimeLabels();
@@ -97,7 +123,7 @@ public class AddTransactionActivity extends AppCompatActivity {
             calc.show(getSupportFragmentManager(), "calculator");
         });
 
-        btnVoice.setOnClickListener(v -> Toast.makeText(this, "Voice Recording coming soon", Toast.LENGTH_SHORT).show());
+        btnVoice.setOnClickListener(v -> startVoiceRecognition());
 
         findViewById(R.id.btnSelectCategory).setOnClickListener(v -> {
             Intent intent = new Intent(this, CategoryActivity.class);
@@ -107,6 +133,18 @@ public class AddTransactionActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btnAddBills).setOnClickListener(v -> showBillsOptions());
+
+        btnDelete.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Transaction")
+                    .setMessage("Are you sure you want to delete this transaction?")
+                    .setPositiveButton("Delete", (d, w) -> {
+                        performDelete();
+                        finish();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
 
         btnSaveExit.setOnClickListener(v -> {
             if (saveTransaction()) {
@@ -142,6 +180,35 @@ public class AddTransactionActivity extends AppCompatActivity {
         }
     }
 
+    private void setupEditMode() {
+        Transaction t = TransactionDbHelper.getInstance(this).getTransactionById(editTransactionId);
+        if (t != null) {
+            setMode(t.getType());
+            editAmount.setText(String.format(Locale.getDefault(), "%.2f", t.getAmount()));
+            editItems.setText(t.getTitle());
+            editNotes.setText(t.getNotes());
+            selectedDateTime.setTimeInMillis(t.getTimestamp());
+            updateDateTimeLabels();
+
+            btnDelete.setVisibility(View.VISIBLE);
+            btnSaveContinue.setVisibility(View.GONE); // Usually not needed in edit mode
+
+            // Store original values for balance correction
+            originalAmount = t.getAmount();
+            originalType = t.getType();
+            originalAccount = t.getAccount();
+        }
+    }
+
+    private void performDelete() {
+        // 1. Reverse balance
+        double delta = originalType.equals(Transaction.TYPE_CASH_IN) ? -originalAmount : originalAmount;
+        BalanceManager.updateAccountBalance(this, originalAccount, delta);
+
+        // 2. Delete from DB
+        TransactionDbHelper.getInstance(this).deleteTransaction(editTransactionId);
+    }
+
     private void updateDateTimeLabels() {
         txtDate.setText(dateSdf.format(selectedDateTime.getTime()));
         txtTime.setText(timeSdf.format(selectedDateTime.getTime()));
@@ -162,6 +229,18 @@ public class AddTransactionActivity extends AppCompatActivity {
             selectedDateTime.set(Calendar.MINUTE, minute);
             updateDateTimeLabels();
         }, selectedDateTime.get(Calendar.HOUR_OF_DAY), selectedDateTime.get(Calendar.MINUTE), true).show();
+    }
+
+    private void startVoiceRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak your note...");
+        try {
+            voiceRecognitionLauncher.launch(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Voice recognition not supported", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showBillsOptions() {
@@ -231,17 +310,47 @@ public class AddTransactionActivity extends AppCompatActivity {
         String account = getSharedPreferences("ExpensesPrefs", MODE_PRIVATE)
                 .getString("ActiveAccount", "Expenses");
         
-        TransactionDbHelper.getInstance(this).addTransaction(
-                itemTitle,
-                amount,
-                currentType,
-                selectedDateTime.getTimeInMillis(),
-                account,
-                notes,
-                "", // voice path placeholder
-                ""  // bills placeholder
-        );
+        String type = currentType;
         
+        if (editTransactionId != -1) {
+            // EDIT MODE logic
+            
+            // 1. Reverse original balance
+            double reverseDelta = originalType.equals(Transaction.TYPE_CASH_IN) ? -originalAmount : originalAmount;
+            BalanceManager.updateAccountBalance(this, originalAccount, reverseDelta);
+            
+            // 2. Update DB record
+            TransactionDbHelper.getInstance(this).updateTransaction(
+                    editTransactionId,
+                    itemTitle,
+                    amount,
+                    type,
+                    selectedDateTime.getTimeInMillis(),
+                    account,
+                    notes,
+                    "", // voice path
+                    ""  // bills
+            );
+        } else {
+            // NEW RECORD logic
+            TransactionDbHelper.getInstance(this).addTransaction(
+                    itemTitle,
+                    amount,
+                    type,
+                    selectedDateTime.getTimeInMillis(),
+                    account,
+                    notes,
+                    "", // voice path placeholder
+                    ""  // bills placeholder
+            );
+        }
+
+        // Apply NEW balance (Shared logic for both new/edit)
+
+        // 1. Sync with Account Balance
+        double delta = type.equals(Transaction.TYPE_CASH_IN) ? amount : -amount;
+        BalanceManager.updateAccountBalance(this, account, delta);
+
         return true;
     }
 }

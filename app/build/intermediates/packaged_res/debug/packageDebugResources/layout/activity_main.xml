@@ -205,34 +205,38 @@
             <LinearLayout
                 android:id="@+id/noteInputContainer"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/summary_border"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/dayRemarksContainer">
 
-                <ImageButton
-                    android:id="@+id/voiceNoteButton"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Voice Note"
-                    android:src="@android:drawable/ic_btn_speak_now"
-                    app:tint="@color/light_green" />
-
                 <EditText
                     android:id="@+id/noteInput"
                     android:layout_width="0dp"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:autofillHints="none"
+                    android:background="@null"
                     android:hint="@string/note_hint"
                     android:inputType="textMultiLine"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white"
                     android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@+id/voiceNoteButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Voice Note"
+                    android:src="@android:drawable/ic_btn_speak_now"
+                    app:tint="@color/light_green" />
             </LinearLayout>
 
             <LinearLayout

@@ -1,25 +1,8 @@
-- [x] Update `Transaction.java` with new fields (notes, voice, bills)
-- [x] Update `TransactionDbHelper.java` (Database migration and new methods)
-- [x] Create layout `activity_add_transaction.xml`
-- [x] Create `AddTransactionActivity.java` with logic for:
-    - [x] Date and Time pickers
-    - [x] Mode switching (Cash In / Cash Out)
-    - [x] Calculator shortcut
-    - [x] Voice note recording (Placeholder toast added)
-    - [x] Bill attachment (Camera/Gallery/PDF intents added)
-    - [x] Category selection integration (Launched via intent)
-- [x] Modify `ExpensesActivity.java` to launch the new activity
-- [x] Register new Activity in `AndroidManifest.xml`
-- [x] Verify functionality (Build and manual check simulation)
-- [x] Refine `AddTransactionActivity` layout and functionality
-    - [x] Update `activity_add_transaction.xml` (Horizontal buttons, Add icon to Bills)
-    - [x] Create `dialog_item_with_icon.xml`
-    - [x] Update `AddTransactionActivity.java` (Calculator install logic, Dialog with icons)
-- [x] Implement Internal Calculator
-    - [x] Create `dialog_calculator.xml` layout
-    - [x] Create `CalculatorDialogFragment.java`
-    - [x] Integrate with `AddTransactionActivity.java`
-- [x] Add Integrated "Items" Field
-    - [x] Add `itemsContainer` to layout
-    - [x] Implement category selection callback to fill Items field
-    - [x] Update save logic to use Items text as description
+- [x] Prioritize Category and Notes in Transaction List
+- [x] View and Manage Transaction Notes via Popup
+- [x] Implement Quick Note Notification Bar
+- [x] Restrict Note Visibility to Expenses Only
+- [x] Standardize Note Input Borders
+    - [x] Update `activity_main.xml` note input style
+    - [x] Update `notification_widget.xml` height
+- [x] Verify functionality

@@ -91,6 +91,7 @@ id btnCalcSub
 id btnCalculator
 id btnCashIn
 id btnCashOut
+id btnDelete
 id btnDeleteAccount
 id btnMoveDown
 id btnMoveUp
@@ -199,8 +200,9 @@ id noteTitleInput
 id notesContainer
 id notesScrollView
 id notesSection
+id notif_note_area
+id notif_voice_btn
 id notif_widget_text
-id notif_widget_title
 id notificationSettingsButton
 id notification_widget_root
 id prevMonth
@@ -211,6 +213,7 @@ id remarkHistoryTitle
 id remarkLabel
 id saveNoteButton
 id saveStickyNoteButton
+id sbVoiceNoteButton
 id secureBoxButton
 id secureBoxTitle
 id selectionBar

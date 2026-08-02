@@ -19,11 +19,20 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         void onLongClick(Transaction transaction);
     }
 
+    public interface OnTransactionClickListener {
+        void onClick(Transaction transaction);
+    }
+
     private List<TransactionListItem> items = new ArrayList<>();
     private final OnTransactionLongClickListener longClickListener;
+    private OnTransactionClickListener clickListener;
 
     public TransactionAdapter(OnTransactionLongClickListener longClickListener) {
         this.longClickListener = longClickListener;
+    }
+
+    public void setOnTransactionClickListener(OnTransactionClickListener listener) {
+        this.clickListener = listener;
     }
 
     public void updateItems(List<TransactionListItem> newItems) {
@@ -63,7 +72,20 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             RowViewHolder rowHolder = (RowViewHolder) holder;
             Transaction transaction = item.getTransaction();
 
-            rowHolder.title.setText(transaction.getTitle());
+            String displayTitle = transaction.getTitle();
+            String notes = transaction.getNotes();
+
+            // Logic: Do not display generic "Cash In" or "Cash Out"
+            // Priority: 1. Category/Item (if not generic), 2. Notes, 3. Placeholder
+            if (displayTitle.equalsIgnoreCase("Cash In") || displayTitle.equalsIgnoreCase("Cash Out")) {
+                if (notes != null && !notes.trim().isEmpty()) {
+                    displayTitle = notes;
+                } else {
+                    displayTitle = "---"; // Placeholder for empty entries
+                }
+            }
+
+            rowHolder.title.setText(displayTitle);
             rowHolder.time.setText(DateFormat.format("hh:mm a", transaction.getTimestamp()));
 
             String formattedAmount = String.format(Locale.getDefault(), "%.2f", transaction.getAmount());
@@ -77,6 +99,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             rowHolder.balance.setText(String.format(Locale.getDefault(), "%.2f", item.getBalanceAfter()));
+
+            rowHolder.itemView.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    clickListener.onClick(transaction);
+                }
+            });
 
             rowHolder.itemView.setOnLongClickListener(v -> {
                 if (longClickListener != null) {

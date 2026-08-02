@@ -98,6 +98,7 @@ public class ExpensesActivity extends AppCompatActivity {
         finalBalanceRow = findViewById(R.id.finalBalanceRow);
 
         transactionAdapter = new TransactionAdapter(this::confirmDeleteTransaction);
+        transactionAdapter.setOnTransactionClickListener(this::showTransactionNotePopup);
         transactionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         transactionsRecyclerView.setAdapter(transactionAdapter);
 
@@ -652,8 +653,53 @@ public class ExpensesActivity extends AppCompatActivity {
                 .setTitle("Delete Transaction")
                 .setMessage("Delete \"" + transaction.getTitle() + "\"?")
                 .setPositiveButton("Delete", (d, w) -> {
+                    // Sync Balance back
+                    double delta = transaction.isCashIn() ? -transaction.getAmount() : transaction.getAmount();
+                    BalanceManager.updateAccountBalance(this, transaction.getAccount(), delta);
+
                     transactionDbHelper.deleteTransaction(transaction.getId());
                     refreshTransactionsList();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showTransactionNotePopup(Transaction transaction) {
+        String note = transaction.getNotes();
+        if (note == null || note.trim().isEmpty()) {
+            return;
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.CustomAlertDialogTheme);
+        builder.setTitle("Transaction Note");
+        builder.setMessage(note);
+
+        builder.setPositiveButton("Edit", (dialog, which) -> {
+            Intent intent = new Intent(this, AddTransactionActivity.class);
+            intent.putExtra("transaction_id", transaction.getId());
+            startActivity(intent);
+        });
+
+        builder.setNegativeButton("Delete", (dialog, which) -> confirmDeleteTransaction(transaction));
+
+        builder.setNeutralButton("Update", (dialog, which) -> showQuickUpdateNoteDialog(transaction));
+
+        builder.show();
+    }
+
+    private void showQuickUpdateNoteDialog(Transaction transaction) {
+        final EditText input = new EditText(this);
+        input.setText(transaction.getNotes());
+        input.setPadding(40, 20, 40, 20);
+
+        new androidx.appcompat.app.AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
+                .setTitle("Update Note")
+                .setView(input)
+                .setPositiveButton("Update", (dialog, which) -> {
+                    String newNote = input.getText().toString().trim();
+                    transactionDbHelper.updateTransactionNote(transaction.getId(), newNote);
+                    refreshTransactionsList();
+                    Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

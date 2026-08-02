@@ -1,39 +1,31 @@
-# Refine Transaction Page: Add "Items" Field and Internal Calculator
+# Standardize Note Input Borders
 
-This plan covers two major updates to the `AddTransactionActivity`: adding a dedicated "Items" selection field and replacing the external calculator intent with an internal calculator dialog.
+The user wants to replace the standard line-based note input with a bordered design (using `summary_border`) in both the main screen and the notification bar. The voice icon must be inside this border, and the height should be approximately two lines.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Internal Calculator**: The app will now have its own calculator dialog. No more switching to external apps! It supports basic math and automatically fills the amount field.
-> - **New "Items" Field**: A new bordered box for "Items" will be added between the Amount and Notes fields. It includes a Category icon to quickly pick from your category list.
-> - **UI Cleanup**: The "Add Items" button at the bottom will be removed since the new "Items" field makes it redundant.
+> - **Unified Design**: The main screen's note input will now look like the "Secure Box" and "Add Transaction" inputs—a clean white border with the voice icon on the right.
+> - **Height Restriction**: The input area height will be fixed to ~50-60dp to ensure it occupies exactly about two lines of text space.
+> - **Voice Icon**: The microphone logo will be moved inside the bordered box.
 
 ## Proposed Changes
 
 ### UI Components
 
-#### [MODIFY] [activity_add_transaction.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/res/layout/activity_add_transaction.xml)
-- Insert a new `LinearLayout` (`itemsContainer`) between `amountContainer` and `notesContainer`.
-- This container will have a bordered background, a "Items" hint/title, and a Category icon.
-- Remove the `btnAddItems` button from the bottom `actionButtonsContainer`.
+#### [MODIFY] [activity_main.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/res/layout/activity_main.xml)
+- Change `noteInputContainer` background to `@drawable/summary_border`.
+- Set `noteInput` background to `@null`.
+- Move `voiceNoteButton` to the right side of the `noteInput` within the container.
+- Set container height to `50dp` or `60dp` (two lines).
 
-#### [NEW] [dialog_calculator.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/res/layout/dialog_calculator.xml)
-- Implement a 4-column grid for the internal calculator (digits, operators, clear, backspace).
-
-### Logic and Integration
-
-#### [NEW] [CalculatorDialogFragment.java](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/java/com/example/mycalendar2026sar/CalculatorDialogFragment.java)
-- Handle arithmetic logic and result callbacks.
-
-#### [MODIFY] [AddTransactionActivity.java](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/java/com/example/mycalendar2026sar/AddTransactionActivity.java)
-- Bind new "Items" field views.
-- Update `btnCalculator` to open `CalculatorDialogFragment`.
-- Update `saveTransaction` to use the "Items" field text as the transaction title.
+#### [MODIFY] [notification_widget.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/res/layout/notification_widget.xml)
+- Verify and ensure the `RemoteViews` layout matches the "two lines" height (adjusting from `64dp` to `50dp` if `64dp` feels too tall).
+- Ensure the voice button and text area are perfectly centered within the border.
 
 ## Verification Plan
 
 ### Manual Verification
-- **Calculator**: Click the calculator icon, perform a calculation, and verify the result fills the amount field.
-- **Items Field**: Verify the "Items" field is correctly positioned. Tap the category icon, select a category, and verify the field updates.
-- **Saving**: Save a transaction with an item name and verify it appears correctly in the Expenses list.
+- **Main Screen**: Open the app and confirm the note entry at the bottom has a white border and the microphone icon is inside it on the right.
+- **Notification**: Toggle the Quick Note Bar and pull down the notification shade. Verify the bar has a similar bordered look and is roughly the height of two lines of text.
+- **Functionality**: Tap the voice icon in both places to ensure they still trigger speech-to-text correctly.

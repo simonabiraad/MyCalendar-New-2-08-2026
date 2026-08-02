@@ -1,5 +1,6 @@
 package com.example.mycalendar2026sar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +20,16 @@ public class CategoryActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Button expenseToggle, incomeToggle;
     private boolean isExpenseView = true;
+    private boolean isSelectionMode = false;
     private CategoryAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
+        isSelectionMode = getIntent().getBooleanExtra("selection_mode", false);
+        isExpenseView = getIntent().getBooleanExtra("is_expense", true);
 
         recyclerView = findViewById(R.id.categoryRecyclerView);
         expenseToggle = findViewById(R.id.categoryExpenseToggle);
@@ -96,16 +101,31 @@ public class CategoryActivity extends AppCompatActivity {
                         .setPositiveButton("Next", (d, w) -> {
                             String customName = nameInput.getText().toString().trim();
                             if (!customName.isEmpty()) {
-                                showAmountDialog(customName);
+                                if (isSelectionMode) {
+                                    returnResult(customName);
+                                } else {
+                                    showAmountDialog(customName);
+                                }
                             }
                         })
                         .setNegativeButton("Cancel", null)
                         .show();
             } else {
-                showAmountDialog(finalTitle);
+                if (isSelectionMode) {
+                    returnResult(finalTitle);
+                } else {
+                    showAmountDialog(finalTitle);
+                }
             }
         });
         recyclerView.setAdapter(adapter);
+    }
+
+    private void returnResult(String category) {
+        Intent data = new Intent();
+        data.putExtra("category", category);
+        setResult(RESULT_OK, data);
+        finish();
     }
 
     private void showAmountDialog(String title) {

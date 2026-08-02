@@ -1,33 +1,39 @@
-# Refine Cash In / Cash Out Design and Functionality
+# Refine Transaction Page: Add "Items" Field and Internal Calculator
 
-The user wants to refine the recently added `AddTransactionActivity` to improve the layout and add specific behaviors for the calculator and bill attachments.
+This plan covers two major updates to the `AddTransactionActivity`: adding a dedicated "Items" selection field and replacing the external calculator intent with an internal calculator dialog.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Calculator Shortcut**: If the app cannot find a calculator on the device, it will prompt the user to install one from the Play Store.
-> - **Bill Attachments**: The "Add Bills" dialog will now show descriptive icons (Camera, Gallery, PDF) next to each option for better clarity.
+> - **Internal Calculator**: The app will now have its own calculator dialog. No more switching to external apps! It supports basic math and automatically fills the amount field.
+> - **New "Items" Field**: A new bordered box for "Items" will be added between the Amount and Notes fields. It includes a Category icon to quickly pick from your category list.
+> - **UI Cleanup**: The "Add Items" button at the bottom will be removed since the new "Items" field makes it redundant.
 
 ## Proposed Changes
 
 ### UI Components
 
 #### [MODIFY] [activity_add_transaction.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/res/layout/activity_add_transaction.xml)
-- Change "Cach In" and "Cach Out" buttons from vertical to horizontal (same line).
-- Add a camera icon drawable to the "Add Bills" button itself.
+- Insert a new `LinearLayout` (`itemsContainer`) between `amountContainer` and `notesContainer`.
+- This container will have a bordered background, a "Items" hint/title, and a Category icon.
+- Remove the `btnAddItems` button from the bottom `actionButtonsContainer`.
 
-#### [NEW] [dialog_item_with_icon.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/res/layout/dialog_item_with_icon.xml)
-- Create a reusable layout for dialog items consisting of an icon and text.
+#### [NEW] [dialog_calculator.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/res/layout/dialog_calculator.xml)
+- Implement a 4-column grid for the internal calculator (digits, operators, clear, backspace).
+
+### Logic and Integration
+
+#### [NEW] [CalculatorDialogFragment.java](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/java/com/example/mycalendar2026sar/CalculatorDialogFragment.java)
+- Handle arithmetic logic and result callbacks.
 
 #### [MODIFY] [AddTransactionActivity.java](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-22-07-2026/app/src/main/java/com/example/mycalendar2026sar/AddTransactionActivity.java)
-- Update calculator click listener to suggest installation if no calculator app is found.
-- Update `showBillsOptions` to use the new custom layout with icons.
+- Bind new "Items" field views.
+- Update `btnCalculator` to open `CalculatorDialogFragment`.
+- Update `saveTransaction` to use the "Items" field text as the transaction title.
 
 ## Verification Plan
 
 ### Manual Verification
-- Deploy to device.
-- Open **Cash In** page.
-- Verify "Cach In" and "Cach Out" buttons are on the same line.
-- Click the **Calculator** icon; if no calculator exists, verify the "Install" prompt appears.
-- Click **Add Bills**; verify the menu shows icons for Camera, Gallery, and PDF.
+- **Calculator**: Click the calculator icon, perform a calculation, and verify the result fills the amount field.
+- **Items Field**: Verify the "Items" field is correctly positioned. Tap the category icon, select a category, and verify the field updates.
+- **Saving**: Save a transaction with an item name and verify it appears correctly in the Expenses list.

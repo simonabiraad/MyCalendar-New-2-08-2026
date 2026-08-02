@@ -13,7 +13,8 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginEnd="16dp"
-        app:tint="@color/light_green" />
+        app:tint="@color/light_green"
+        android:contentDescription="@null" />
 
     <TextView
         android:id="@+id/itemText"

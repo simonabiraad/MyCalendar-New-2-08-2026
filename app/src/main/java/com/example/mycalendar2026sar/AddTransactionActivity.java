@@ -14,9 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,13 +31,25 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     private TextView titleView, txtDate, txtTime;
     private Button btnCashIn, btnCashOut, btnSaveExit, btnSaveContinue;
-    private EditText editAmount, editNotes;
-    private ImageView btnCalculator, btnVoice;
+    private EditText editAmount, editItems, editNotes;
+    private ImageView btnCalculator, btnVoice, btnSelectCategory;
     
     private String currentType = Transaction.TYPE_CASH_IN;
     private Calendar selectedDateTime = Calendar.getInstance();
     private SimpleDateFormat dateSdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
     private SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+    private final ActivityResultLauncher<Intent> categoryLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    String category = result.getData().getStringExtra("category");
+                    if (category != null) {
+                        editItems.setText(category);
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +57,23 @@ public class AddTransactionActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_transaction);
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.addTransactionMain), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
         titleView = findViewById(R.id.addTransactionTitle);
         btnCashIn = findViewById(R.id.btnCashIn);
         btnCashOut = findViewById(R.id.btnCashOut);
         txtDate = findViewById(R.id.txtDate);
         txtTime = findViewById(R.id.txtTime);
         editAmount = findViewById(R.id.editAmount);
+        editItems = findViewById(R.id.editItems);
         editNotes = findViewById(R.id.editNotes);
         btnCalculator = findViewById(R.id.btnCalculator);
         btnVoice = findViewById(R.id.btnVoice);
+        btnSelectCategory = findViewById(R.id.btnSelectCategory);
         btnSaveExit = findViewById(R.id.btnSaveExit);
         btnSaveContinue = findViewById(R.id.btnSaveContinue);
 
@@ -68,36 +93,20 @@ public class AddTransactionActivity extends AppCompatActivity {
         findViewById(R.id.timePickerBox).setOnClickListener(v -> showTimePicker());
 
         btnCalculator.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_APP_CALCULATOR);
-                startActivity(intent);
-            } catch (Exception e) {
-                new AlertDialog.Builder(this)
-                        .setTitle("Calculator Not Found")
-                        .setMessage("Would you like to install a calculator from the Play Store?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            try {
-                                startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("market://search?q=calculator")));
-                            } catch (Exception ex) {
-                                startActivity(new Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://play.google.com/store/search?q=calculator")));
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            }
+            CalculatorDialogFragment calc = CalculatorDialogFragment.newInstance(result -> editAmount.setText(result));
+            calc.show(getSupportFragmentManager(), "calculator");
         });
 
         btnVoice.setOnClickListener(v -> Toast.makeText(this, "Voice Recording coming soon", Toast.LENGTH_SHORT).show());
 
-        findViewById(R.id.btnAddBills).setOnClickListener(v -> showBillsOptions());
-        findViewById(R.id.btnAddItems).setOnClickListener(v -> {
+        findViewById(R.id.btnSelectCategory).setOnClickListener(v -> {
             Intent intent = new Intent(this, CategoryActivity.class);
-            // We can't easily return a result from CategoryActivity as it's currently built to save directly.
-            // For now, let's just launch it.
-            startActivity(intent);
+            intent.putExtra("selection_mode", true);
+            intent.putExtra("is_expense", Transaction.TYPE_CASH_OUT.equals(currentType));
+            categoryLauncher.launch(intent);
         });
+
+        findViewById(R.id.btnAddBills).setOnClickListener(v -> showBillsOptions());
 
         btnSaveExit.setOnClickListener(v -> {
             if (saveTransaction()) {
@@ -108,6 +117,7 @@ public class AddTransactionActivity extends AppCompatActivity {
         btnSaveContinue.setOnClickListener(v -> {
             if (saveTransaction()) {
                 editAmount.setText("");
+                editItems.setText("");
                 editNotes.setText("");
                 Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
             }
@@ -198,11 +208,16 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     private boolean saveTransaction() {
         String amountStr = editAmount.getText().toString().trim();
+        String itemTitle = editItems.getText().toString().trim();
         String notes = editNotes.getText().toString().trim();
         
         if (amountStr.isEmpty()) {
             Toast.makeText(this, "Please enter amount", Toast.LENGTH_SHORT).show();
             return false;
+        }
+
+        if (itemTitle.isEmpty()) {
+            itemTitle = currentType.equals(Transaction.TYPE_CASH_IN) ? "Cash In" : "Cash Out";
         }
 
         double amount;
@@ -216,10 +231,8 @@ public class AddTransactionActivity extends AppCompatActivity {
         String account = getSharedPreferences("ExpensesPrefs", MODE_PRIVATE)
                 .getString("ActiveAccount", "Expenses");
         
-        String title = currentType.equals(Transaction.TYPE_CASH_IN) ? "Cash In" : "Cash Out";
-        
         TransactionDbHelper.getInstance(this).addTransaction(
-                title,
+                itemTitle,
                 amount,
                 currentType,
                 selectedDateTime.getTimeInMillis(),

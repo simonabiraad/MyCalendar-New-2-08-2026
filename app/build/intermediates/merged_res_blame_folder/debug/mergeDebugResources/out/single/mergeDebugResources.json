@@ -72,8 +72,8 @@
         "source": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-main-40:\\mipmap-mdpi\\ic_launcher_foreground.webp"
     },
     {
-        "merged": "com.example.mycalendar2026sar.app-debug-38:/layout_dialog_item_with_icon.xml.flat",
-        "source": "com.example.mycalendar2026sar.app-main-40:/layout/dialog_item_with_icon.xml"
+        "merged": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-debug-38:\\layout_dialog_item_with_icon.xml.flat",
+        "source": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-main-40:\\layout\\dialog_item_with_icon.xml"
     },
     {
         "merged": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-debug-38:\\layout_activity_category.xml.flat",
@@ -102,6 +102,10 @@
     {
         "merged": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-debug-38:\\layout_calendar_widget.xml.flat",
         "source": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-main-40:\\layout\\calendar_widget.xml"
+    },
+    {
+        "merged": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-debug-38:\\layout_dialog_calculator.xml.flat",
+        "source": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-main-40:\\layout\\dialog_calculator.xml"
     },
     {
         "merged": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\daemon\\9.4.1\\com.example.mycalendar2026sar.app-debug-38:\\drawable_ic_banner_foreground.xml.flat",

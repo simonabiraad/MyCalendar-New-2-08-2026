@@ -15,3 +15,11 @@
     - [x] Update `activity_add_transaction.xml` (Horizontal buttons, Add icon to Bills)
     - [x] Create `dialog_item_with_icon.xml`
     - [x] Update `AddTransactionActivity.java` (Calculator install logic, Dialog with icons)
+- [x] Implement Internal Calculator
+    - [x] Create `dialog_calculator.xml` layout
+    - [x] Create `CalculatorDialogFragment.java`
+    - [x] Integrate with `AddTransactionActivity.java`
+- [x] Add Integrated "Items" Field
+    - [x] Add `itemsContainer` to layout
+    - [x] Implement category selection callback to fill Items field
+    - [x] Update save logic to use Items text as description

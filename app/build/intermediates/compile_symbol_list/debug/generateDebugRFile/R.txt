@@ -88,15 +88,20 @@ int id btnCalcMult 0x0
 int id btnCalcOk 0x0
 int id btnCalcSub 0x0
 int id btnCalculator 0x0
+int id btnCancel 0x0
 int id btnCashIn 0x0
 int id btnCashOut 0x0
+int id btnCrop 0x0
 int id btnDelete 0x0
 int id btnDeleteAccount 0x0
+int id btnDraw 0x0
 int id btnMoveDown 0x0
 int id btnMoveUp 0x0
+int id btnOk 0x0
 int id btnSaveContinue 0x0
 int id btnSaveExit 0x0
 int id btnSelectCategory 0x0
+int id btnText 0x0
 int id btnVoice 0x0
 int id buttonContainer 0x0
 int id calcDisplay 0x0
@@ -132,6 +137,7 @@ int id deletedHistoryContainer 0x0
 int id deletedHistoryTitle 0x0
 int id dialogTitle 0x0
 int id drawer_layout 0x0
+int id drawingOverlay 0x0
 int id editAccountBalance 0x0
 int id editAccountName 0x0
 int id editAccountsButton 0x0
@@ -153,6 +159,7 @@ int id finalBalanceRow 0x0
 int id finalBalanceTotalText 0x0
 int id footerButtonsContainer 0x0
 int id headerTitle 0x0
+int id imagePreview 0x0
 int id income_main 0x0
 int id itemIcon 0x0
 int id itemText 0x0
@@ -191,6 +198,7 @@ int id nav_transfer 0x0
 int id nextMonth 0x0
 int id noteContentInput 0x0
 int id noteFlag 0x0
+int id noteImage 0x0
 int id noteInput 0x0
 int id noteInputContainer 0x0
 int id noteText 0x0
@@ -204,6 +212,9 @@ int id notif_voice_btn 0x0
 int id notif_widget_text 0x0
 int id notificationSettingsButton 0x0
 int id notification_widget_root 0x0
+int id optionCamera 0x0
+int id optionGallery 0x0
+int id optionPdf 0x0
 int id prevMonth 0x0
 int id previousBalanceRow 0x0
 int id previousBalanceTotalText 0x0
@@ -212,6 +223,7 @@ int id remarkHistoryTitle 0x0
 int id remarkLabel 0x0
 int id saveNoteButton 0x0
 int id saveStickyNoteButton 0x0
+int id sbCameraNoteButton 0x0
 int id sbVoiceNoteButton 0x0
 int id secureBoxButton 0x0
 int id secureBoxTitle 0x0
@@ -261,6 +273,7 @@ int layout activity_category 0x0
 int layout activity_daily_expenses 0x0
 int layout activity_expense_type 0x0
 int layout activity_expenses 0x0
+int layout activity_image_editor 0x0
 int layout activity_income 0x0
 int layout activity_main 0x0
 int layout activity_monthly_expenses 0x0
@@ -276,6 +289,7 @@ int layout dialog_add_account 0x0
 int layout dialog_add_transaction 0x0
 int layout dialog_calculator 0x0
 int layout dialog_item_with_icon 0x0
+int layout dialog_media_picker 0x0
 int layout item_account 0x0
 int layout item_category 0x0
 int layout item_category_chip 0x0

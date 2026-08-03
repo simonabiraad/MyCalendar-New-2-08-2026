@@ -1,0 +1,4 @@
+- [x] Multimedia Support implementation
+- [x] Fix full-page viewer for image sticky notes
+    - [x] Modify `showEditFullPage` in `SecureBoxActivity.java` to render images
+- [x] Verify image rendering in full-page dialog

@@ -4,7 +4,7 @@
             "outputFile": "com.example.mycalendar2026sar.app-mergeDebugResources-36:/values-h480dp-land-v13/values-h480dp-land-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\gradle-9.2.1\\caches\\9.4.1\\transforms\\beb0e121ea5bd5e30ea0d5e16de01574\\transformed\\material-1.10.0\\res\\values-h480dp-land-v13\\values-h480dp-land-v13.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-h480dp-land-v13\\values-h480dp-land-v13.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10",
                         "startColumns": "4,4,4,4,4,4,4,4,4",

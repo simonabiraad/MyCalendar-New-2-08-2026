@@ -89,15 +89,20 @@ id btnCalcMult
 id btnCalcOk
 id btnCalcSub
 id btnCalculator
+id btnCancel
 id btnCashIn
 id btnCashOut
+id btnCrop
 id btnDelete
 id btnDeleteAccount
+id btnDraw
 id btnMoveDown
 id btnMoveUp
+id btnOk
 id btnSaveContinue
 id btnSaveExit
 id btnSelectCategory
+id btnText
 id btnVoice
 id buttonContainer
 id calcDisplay
@@ -133,6 +138,7 @@ id deletedHistoryContainer
 id deletedHistoryTitle
 id dialogTitle
 id drawer_layout
+id drawingOverlay
 id editAccountBalance
 id editAccountName
 id editAccountsButton
@@ -154,6 +160,7 @@ id finalBalanceRow
 id finalBalanceTotalText
 id footerButtonsContainer
 id headerTitle
+id imagePreview
 id income_main
 id itemIcon
 id itemText
@@ -192,6 +199,7 @@ id nav_transfer
 id nextMonth
 id noteContentInput
 id noteFlag
+id noteImage
 id noteInput
 id noteInputContainer
 id noteText
@@ -205,6 +213,9 @@ id notif_voice_btn
 id notif_widget_text
 id notificationSettingsButton
 id notification_widget_root
+id optionCamera
+id optionGallery
+id optionPdf
 id prevMonth
 id previousBalanceRow
 id previousBalanceTotalText
@@ -213,6 +224,7 @@ id remarkHistoryTitle
 id remarkLabel
 id saveNoteButton
 id saveStickyNoteButton
+id sbCameraNoteButton
 id sbVoiceNoteButton
 id secureBoxButton
 id secureBoxTitle
@@ -262,6 +274,7 @@ layout activity_category
 layout activity_daily_expenses
 layout activity_expense_type
 layout activity_expenses
+layout activity_image_editor
 layout activity_income
 layout activity_main
 layout activity_monthly_expenses
@@ -277,6 +290,7 @@ layout dialog_add_account
 layout dialog_add_transaction
 layout dialog_calculator
 layout dialog_item_with_icon
+layout dialog_media_picker
 layout item_account
 layout item_category
 layout item_category_chip

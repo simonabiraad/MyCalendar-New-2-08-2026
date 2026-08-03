@@ -107,6 +107,10 @@ public class MainActivity extends AppCompatActivity {
     private int lastDeletedIndex;
     private String lastDeletedDateKey;
 
+    private int voiceTargetIndex = -1;
+    private SharedPreferences voiceTargetPrefs = null;
+    private String voiceTargetDateKey = null;
+
     private final ActivityResultLauncher<Intent> voiceRecognitionLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -116,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
                         if (currentDialogInput != null) {
                             String existingText = currentDialogInput.getText().toString();
                             currentDialogInput.setText(existingText.isEmpty() ? spokenText : existingText + " " + spokenText);
+                        } else if (voiceTargetPrefs != null && voiceTargetDateKey != null && voiceTargetIndex != -1) {
+                            appendVoiceToNote(spokenText, voiceTargetIndex, voiceTargetDateKey, voiceTargetPrefs);
                         } else if (noteInput.hasFocus()) {
                             String existingText = noteInput.getText().toString();
                             noteInput.setText(existingText.isEmpty() ? spokenText : existingText + " " + spokenText);
@@ -684,6 +690,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void appendVoiceToNote(String text, int index, String dateKey, SharedPreferences prefs) {
+        String currentText = prefs.getString(dateKey, "");
+        if (currentText.isEmpty()) return;
+        List<String> remarksList = new ArrayList<>(Arrays.asList(currentText.split("\n")));
+        if (index >= 0 && index < remarksList.size()) {
+            String note = remarksList.get(index);
+            remarksList.set(index, note + " " + text);
+            prefs.edit().putString(dateKey, String.join("\n", remarksList)).apply();
+            if (Objects.equals(dateKey, currentDateKey)) loadRemarksForSelectedDate();
+            updateRemarkHistory();
+        }
+        voiceTargetIndex = -1;
+        voiceTargetPrefs = null;
+        voiceTargetDateKey = null;
+    }
+
     private void addRemarkView(String remarkText, int index, SharedPreferences sourcePrefs) {
         String noteId = getPrefsName(sourcePrefs) + ":" + currentDateKey + ":" + index;
         
@@ -698,6 +720,18 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textView = createRemarkTextView(remarkText, index, sourcePrefs);
         horizontalLayout.addView(textView);
+
+        // Add Voice Button
+        int iconSizeSmall = (int) (22 * getResources().getDisplayMetrics().density);
+        LinearLayout.LayoutParams voiceParams = new LinearLayout.LayoutParams(iconSizeSmall, iconSizeSmall);
+        voiceParams.setMargins(4, 0, 4, 0);
+        ImageButton voiceBtn = createActionButton(android.R.drawable.ic_btn_speak_now, voiceParams, v -> {
+            voiceTargetIndex = index;
+            voiceTargetPrefs = sourcePrefs;
+            voiceTargetDateKey = currentDateKey;
+            startVoiceRecognition();
+        });
+        horizontalLayout.addView(voiceBtn);
 
         textView.setOnLongClickListener(v -> {
             if (!isSelectionMode) {
@@ -721,55 +755,55 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(iconSize, iconSize);
         btnParams.setMargins(4, 0, 4, 0);
 
-        ImageButton alarmButton = createActionButton(android.R.drawable.ic_lock_idle_alarm, btnParams, v -> manageReminder(remarkText));
-        
-        String reminderKey = currentDateKey + "_" + remarkText;
-        boolean hasReminder = reminderPreferences.contains(reminderKey);
-        if (hasReminder) {
-            alarmButton.setImageTintList(ColorStateList.valueOf(colorPrefs.getInt("color_main_theme", getColor(R.color.light_green))));
-        } else {
-            alarmButton.setImageTintList(null);
-        }
-        
-        horizontalLayout.addView(alarmButton);
+        ImageButton menuBtn = createActionButton(android.R.drawable.ic_menu_more, btnParams, v -> {
+            android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+            popup.getMenu().add(0, 1, 0, "Reminder").setIcon(android.R.drawable.ic_lock_idle_alarm);
+            popup.getMenu().add(0, 2, 0, "Edit").setIcon(android.R.drawable.ic_menu_edit);
+            popup.getMenu().add(0, 3, 0, "Share").setIcon(android.R.drawable.ic_menu_share);
+            popup.getMenu().add(0, 4, 0, "Archive").setIcon(android.R.drawable.ic_menu_save);
+            popup.getMenu().add(0, 5, 0, "Delete").setIcon(android.R.drawable.ic_menu_delete);
 
-        horizontalLayout.addView(createActionButton(android.R.drawable.ic_menu_edit, btnParams, v -> showEditDialog(remarkText, index, sourcePrefs)));
+            // Optional: force icons to show in PopupMenu
+            try {
+                java.lang.reflect.Field field = popup.getClass().getDeclaredField("mPopup");
+                field.setAccessible(true);
+                Object menuHelper = field.get(popup);
+                Class<?> classPopupHelper = Class.forName(menuHelper.getClass().getName());
+                java.lang.reflect.Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                setForceIcons.invoke(menuHelper, true);
+            } catch (Exception ignored) {}
 
-        horizontalLayout.addView(createActionButton(android.R.drawable.ic_menu_share, btnParams, v -> {
-            String[] options = {"Share as Text", "Share as .ics File"};
-            new AlertDialog.Builder(this)
-                    .setTitle("Share Note")
-                    .setItems(options, (dialog, which) -> {
-                        if (which == 0) {
-                            String noteBody = getNoteBody(remarkText);
-                            String shareText = "SAR CALENDAR REMINDER:\n" + noteBody + "\nDate: " + currentDateKey;
-                            
-                            String reminderKeyForShare = currentDateKey + "_" + remarkText;
-                            String savedTime = reminderPreferences.getString(reminderKeyForShare, null);
-                            String gCalUrl = getGoogleCalendarUrl(noteBody, currentDateKey, savedTime);
-                            
-                            if (!gCalUrl.isEmpty()) {
-                                shareText += "\n\nAdd to Google Calendar:\n" + gCalUrl;
-                            }
-                            
-                            if (hasReminder) {
-                                shareText += "\n\n(Check SAR Calendar to sync this reminder)";
-                            }
-                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-                            sendIntent.setType("text/plain");
-                            startActivity(Intent.createChooser(sendIntent, "Share Note via"));
-                        } else {
-                            shareNoteAsIcs(remarkText, currentDateKey);
-                        }
-                    })
-                    .show();
-        }));
-
-        ImageButton archiveButton = createArchiveButton(btnParams, index, sourcePrefs);
-        horizontalLayout.addView(archiveButton);
-
-        horizontalLayout.addView(createActionButton(android.R.drawable.ic_menu_delete, btnParams, v -> deleteRemark(index, sourcePrefs)));
+            popup.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
+                if (id == 1) manageReminder(remarkText);
+                else if (id == 2) showEditDialog(remarkText, index, sourcePrefs);
+                else if (id == 3) {
+                    // Reuse sharing logic
+                    String[] options = {"Share as Text", "Share as .ics File"};
+                    new AlertDialog.Builder(this)
+                            .setTitle("Share Note")
+                            .setItems(options, (dialog, which) -> {
+                                if (which == 0) {
+                                    String noteBody = getNoteBody(remarkText);
+                                    String shareText = "SAR CALENDAR REMINDER:\n" + noteBody + "\nDate: " + currentDateKey;
+                                    String reminderKeyForShare = currentDateKey + "_" + remarkText;
+                                    String savedTime = reminderPreferences.getString(reminderKeyForShare, null);
+                                    String gCalUrl = getGoogleCalendarUrl(noteBody, currentDateKey, savedTime);
+                                    if (!gCalUrl.isEmpty()) shareText += "\n\nAdd to Google Calendar:\n" + gCalUrl;
+                                    Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                                    sendIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+                                    sendIntent.setType("text/plain");
+                                    startActivity(Intent.createChooser(sendIntent, "Share Note via"));
+                                } else shareNoteAsIcs(remarkText, currentDateKey);
+                            }).show();
+                }
+                else if (id == 4) archiveNote(index);
+                else if (id == 5) deleteRemark(index, sourcePrefs);
+                return true;
+            });
+            popup.show();
+        });
+        horizontalLayout.addView(menuBtn);
         
         dayRemarksContainer.addView(horizontalLayout);
     }
@@ -954,29 +988,6 @@ public class MainActivity extends AppCompatActivity {
         return button;
     }
 
-    private ImageButton createArchiveButton(LinearLayout.LayoutParams params, int index, SharedPreferences sourcePrefs) {
-        ImageButton archiveButton = new ImageButton(this);
-        archiveButton.setBackgroundColor(Color.TRANSPARENT);
-        archiveButton.setLayoutParams(params);
-        archiveButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        archiveButton.setPadding(4, 4, 4, 4);
-        if (sourcePrefs == archivePreferences) {
-            archiveButton.setImageResource(android.R.drawable.ic_menu_revert);
-            archiveButton.setOnClickListener(v -> unarchiveNote(index));
-        } else if (sourcePrefs == deletedPreferences) {
-            archiveButton.setImageResource(android.R.drawable.ic_menu_revert);
-            archiveButton.setOnClickListener(v -> restoreFromTrash(index));
-        } else {
-            archiveButton.setImageResource(android.R.drawable.ic_menu_save);
-            archiveButton.setOnClickListener(v -> archiveNote(index));
-        }
-        return archiveButton;
-    }
-
-    private void restoreFromTrash(int index) {
-        restoreSingleNote(currentDateKey, index, deletedPreferences);
-    }
-
     private void restoreSingleNote(String dateKey, int index, SharedPreferences sourcePrefs) {
         String currentNotes = sourcePrefs.getString(dateKey, "");
         if (currentNotes.isEmpty()) return;
@@ -1039,26 +1050,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("No", null).show();
-    }
-
-    private void unarchiveNote(int index) {
-        String archivedRemarks = archivePreferences.getString(currentDateKey, "");
-        if (archivedRemarks.isEmpty()) return;
-        List<String> remarksList = new ArrayList<>(Arrays.asList(archivedRemarks.split("\n")));
-        if (index >= 0 && index < remarksList.size()) {
-            String noteToRestore = remarksList.remove(index);
-            String savedRemarks = sharedPreferences.getString(currentDateKey, "");
-            String updatedSaved = savedRemarks.isEmpty() ? noteToRestore : savedRemarks + "\n" + noteToRestore;
-            sharedPreferences.edit().putString(currentDateKey, updatedSaved).apply();
-            String updatedArchived = String.join("\n", remarksList);
-            if (updatedArchived.isEmpty()) archivePreferences.edit().remove(currentDateKey).apply();
-            else archivePreferences.edit().putString(currentDateKey, updatedArchived).apply();
-            loadRemarksForSelectedDate();
-            updateRemarkHistory();
-            adapter.notifyDataSetChanged();
-            updateAllWidgets();
-            Toast.makeText(this, "Note restored from archive", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private String addDefaultIcsDates(String icsContent, Date date) {
@@ -1574,6 +1565,18 @@ public class MainActivity extends AppCompatActivity {
                 tv.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
                 noteLayout.addView(tv);
 
+                // Add Voice Button
+                int iconSizeVoice = (int) (22 * getResources().getDisplayMetrics().density);
+                LinearLayout.LayoutParams voiceParams = new LinearLayout.LayoutParams(iconSizeVoice, iconSizeVoice);
+                voiceParams.setMargins(4, 0, 4, 0);
+                ImageButton voiceBtn = createActionButton(android.R.drawable.ic_btn_speak_now, voiceParams, v -> {
+                    voiceTargetIndex = index;
+                    voiceTargetPrefs = prefs;
+                    voiceTargetDateKey = currentLoopDateKey;
+                    startVoiceRecognition();
+                });
+                noteLayout.addView(voiceBtn);
+
                 tv.setOnClickListener(v -> {
                     if (isSelectionMode) {
                         toggleSelection(noteId);
@@ -1595,55 +1598,77 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 int iconSize = (int) (28 * getResources().getDisplayMetrics().density);
-                ImageButton shareBtn = new ImageButton(this);
-                shareBtn.setImageResource(android.R.drawable.ic_menu_share);
-                shareBtn.setBackgroundColor(Color.TRANSPARENT);
-                shareBtn.setPadding(4, 4, 4, 4);
-                shareBtn.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                noteLayout.addView(shareBtn, new LinearLayout.LayoutParams(iconSize, iconSize));
-                shareBtn.setOnClickListener(v -> {
+                LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(iconSize, iconSize);
+                btnParams.setMargins(4, 0, 4, 0);
+
+                ImageButton menuBtn = createActionButton(android.R.drawable.ic_menu_more, btnParams, v -> {
                     if (isSelectionMode) {
                         toggleSelection(noteId);
                         return;
                     }
-                    String[] options = {"Share as Text", "Share as .ics File"};
-                    new AlertDialog.Builder(this).setTitle("Share Note").setItems(options, (dialog, which) -> {
-                        if (which == 0) {
-                            String textToShare = getNoteBody(noteText);
-                            Intent sendIntent = new Intent();
-                            sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
-                            sendIntent.setType("text/plain");
-                            startActivity(Intent.createChooser(sendIntent, "Share Note via"));
-                        } else shareNoteAsIcs(noteText, currentLoopDateKey);
-                    }).show();
+                    android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+                    popup.getMenu().add(0, 1, 0, "Share").setIcon(android.R.drawable.ic_menu_share);
+                    
+                    if (container == archiveHistoryContainer || container == deletedHistoryContainer) {
+                        popup.getMenu().add(0, 2, 0, "Restore").setIcon(android.R.drawable.ic_menu_revert);
+                        popup.getMenu().add(0, 3, 0, "Delete Permanently").setIcon(android.R.drawable.ic_menu_delete);
+                    } else {
+                        popup.getMenu().add(0, 4, 0, "Archive").setIcon(android.R.drawable.ic_menu_save);
+                        popup.getMenu().add(0, 5, 0, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+                    }
+
+                    try {
+                        java.lang.reflect.Field field = popup.getClass().getDeclaredField("mPopup");
+                        field.setAccessible(true);
+                        Object menuHelper = field.get(popup);
+                        Class<?> classPopupHelper = Class.forName(menuHelper.getClass().getName());
+                        java.lang.reflect.Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                        setForceIcons.invoke(menuHelper, true);
+                    } catch (Exception ignored) {}
+
+                    popup.setOnMenuItemClickListener(item -> {
+                        int itemId = item.getItemId();
+                        if (itemId == 1) {
+                            String[] options = {"Share as Text", "Share as .ics File"};
+                            new AlertDialog.Builder(this).setTitle("Share Note").setItems(options, (dialog, which) -> {
+                                if (which == 0) {
+                                    String textToShare = getNoteBody(noteText);
+                                    Intent sendIntent = new Intent();
+                                    sendIntent.setAction(Intent.ACTION_SEND);
+                                    sendIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
+                                    sendIntent.setType("text/plain");
+                                    startActivity(Intent.createChooser(sendIntent, "Share Note via"));
+                                } else shareNoteAsIcs(noteText, currentLoopDateKey);
+                            }).show();
+                        } else if (itemId == 2) {
+                            restoreSingleNote(currentLoopDateKey, index, prefs);
+                        } else if (itemId == 3) {
+                            deleteSingleNotePermanently(currentLoopDateKey, index, prefs);
+                        } else if (itemId == 4) {
+                            // Archive logic for history
+                            SharedPreferences sharedPrefs = getSharedPreferences("CalendarNotes", Context.MODE_PRIVATE);
+                            SharedPreferences archivePrefs = getSharedPreferences("ArchivedNotes", Context.MODE_PRIVATE);
+                            
+                            String currentNotes = prefs.getString(currentLoopDateKey, "");
+                            List<String> list = new ArrayList<>(Arrays.asList(currentNotes.split("\n")));
+                            if (index >= 0 && index < list.size()) {
+                                String noteToArchive = list.remove(index);
+                                String archived = archivePrefs.getString(currentLoopDateKey, "");
+                                archivePrefs.edit().putString(currentLoopDateKey, archived.isEmpty() ? noteToArchive : archived + "\n" + noteToArchive).apply();
+                                if (list.isEmpty()) prefs.edit().remove(currentLoopDateKey).apply();
+                                else prefs.edit().putString(currentLoopDateKey, String.join("\n", list)).apply();
+                                updateRemarkHistory();
+                                if (Objects.equals(currentLoopDateKey, currentDateKey)) loadRemarksForSelectedDate();
+                                Toast.makeText(this, "Note archived", Toast.LENGTH_SHORT).show();
+                            }
+                        } else if (itemId == 5) {
+                            deleteSingleNote(currentLoopDateKey, index, prefs);
+                        }
+                        return true;
+                    });
+                    popup.show();
                 });
-                if (container == archiveHistoryContainer || container == deletedHistoryContainer) {
-                    ImageButton restoreBtn = new ImageButton(this);
-                    restoreBtn.setImageResource(android.R.drawable.ic_menu_revert);
-                    restoreBtn.setBackgroundColor(Color.TRANSPARENT);
-                    restoreBtn.setPadding(4, 4, 4, 4);
-                    restoreBtn.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    noteLayout.addView(restoreBtn, new LinearLayout.LayoutParams(iconSize, iconSize));
-                    restoreBtn.setOnClickListener(v -> {
-                        if (isSelectionMode) toggleSelection(noteId);
-                        else restoreSingleNote(currentLoopDateKey, index, prefs);
-                    });
-                    ImageButton delBtn = new ImageButton(this);
-                    delBtn.setImageResource(android.R.drawable.ic_menu_delete);
-                    delBtn.setBackgroundColor(Color.TRANSPARENT);
-                    delBtn.setPadding(4, 4, 4, 4);
-                    delBtn.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    noteLayout.addView(delBtn, new LinearLayout.LayoutParams(iconSize, iconSize));
-                    if (container == archiveHistoryContainer) delBtn.setOnClickListener(v -> {
-                        if (isSelectionMode) toggleSelection(noteId);
-                        else deleteSingleNote(currentLoopDateKey, index, prefs);
-                    });
-                    else if (container == deletedHistoryContainer) delBtn.setOnClickListener(v -> {
-                        if (isSelectionMode) toggleSelection(noteId);
-                        else deleteSingleNotePermanently(currentLoopDateKey, index, prefs);
-                    });
-                }
+                noteLayout.addView(menuBtn);
                 container.addView(noteLayout);
             }
         }

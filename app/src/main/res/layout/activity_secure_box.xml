@@ -161,6 +161,15 @@
                 android:paddingBottom="4dp">
 
                 <ImageButton
+                    android:id="@+id/sbCameraNoteButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Camera Note"
+                    android:src="@android:drawable/ic_menu_camera"
+                    app:tint="@color/light_green" />
+
+                <ImageButton
                     android:id="@+id/sbVoiceNoteButton"
                     android:layout_width="32dp"
                     android:layout_height="32dp"

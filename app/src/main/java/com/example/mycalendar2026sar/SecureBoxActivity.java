@@ -22,6 +22,14 @@ import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.graphics.pdf.PdfRenderer;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import androidx.core.content.FileProvider;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -57,6 +65,39 @@ public class SecureBoxActivity extends AppCompatActivity {
 
     private String activeCategoryKey = "";
     private int activeCategoryColor = 0;
+
+    private Uri cameraImageUri;
+
+    private final ActivityResultLauncher<Uri> cameraLauncher =
+            registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
+                if (success && cameraImageUri != null) {
+                    launchImageEditor(cameraImageUri);
+                }
+            });
+
+    private final ActivityResultLauncher<androidx.activity.result.PickVisualMediaRequest> galleryLauncher =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    launchImageEditor(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<String[]> pdfLauncher =
+            registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+                if (uri != null) {
+                    convertPdfToBitmap(uri);
+                }
+            });
+
+    private final ActivityResultLauncher<Intent> imageEditorLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    String path = result.getData().getStringExtra("resultPath");
+                    if (path != null) {
+                        saveImageNote(path);
+                    }
+                }
+            });
 
     private final ActivityResultLauncher<Intent> voiceRecognitionLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -234,6 +275,78 @@ public class SecureBoxActivity extends AppCompatActivity {
         findViewById(R.id.moveCategoryRightButton).setOnClickListener(v -> moveCategory(activeCategoryKey, 1));
         findViewById(R.id.addCategoryButton).setOnClickListener(v -> showAddCategoryDialog());
         findViewById(R.id.sbVoiceNoteButton).setOnClickListener(v -> startVoiceRecognition());
+        findViewById(R.id.sbCameraNoteButton).setOnClickListener(v -> showSourceOptionsDialog());
+    }
+
+    private void showSourceOptionsDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_media_picker, null);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Attach Media")
+                .setView(dialogView)
+                .create();
+
+        dialogView.findViewById(R.id.optionCamera).setOnClickListener(v -> {
+            dialog.dismiss();
+            File photoFile = new File(getCacheDir(), "camera_secure.jpg");
+            cameraImageUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
+            cameraLauncher.launch(cameraImageUri);
+        });
+
+        dialogView.findViewById(R.id.optionGallery).setOnClickListener(v -> {
+            dialog.dismiss();
+            galleryLauncher.launch(new androidx.activity.result.PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        });
+
+        dialogView.findViewById(R.id.optionPdf).setOnClickListener(v -> {
+            dialog.dismiss();
+            pdfLauncher.launch(new String[]{"application/pdf"});
+        });
+
+        dialog.show();
+    }
+
+    private void launchImageEditor(Uri uri) {
+        Intent intent = new Intent(this, ImageEditorActivity.class);
+        intent.putExtra("imageUri", uri.toString());
+        imageEditorLauncher.launch(intent);
+    }
+
+    private void convertPdfToBitmap(Uri uri) {
+        try {
+            ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
+            if (pfd != null) {
+                PdfRenderer renderer = new PdfRenderer(pfd);
+                if (renderer.getPageCount() > 0) {
+                    PdfRenderer.Page page = renderer.openPage(0);
+                    Bitmap bitmap = Bitmap.createBitmap(page.getWidth() * 2, page.getHeight() * 2, Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(bitmap);
+                    canvas.drawColor(Color.WHITE);
+                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                    page.close();
+
+                    File file = new File(getCacheDir(), "pdf_page_temp.jpg");
+                    FileOutputStream fos = new FileOutputStream(file);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                    fos.close();
+
+                    launchImageEditor(Uri.fromFile(file));
+                }
+                renderer.close();
+                pfd.close();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "PDF Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveImageNote(String path) {
+        String fullNote = "Image" + TITLE_SEP + "[IMG:" + path + "]";
+        String existingNotes = securePrefs.getString(activeCategoryKey, "");
+        String updatedNotes = existingNotes.isEmpty() ? fullNote : existingNotes + SEPARATOR + fullNote;
+        securePrefs.edit().putString(activeCategoryKey, updatedNotes).apply();
+        loadNotes(activeCategoryKey);
     }
 
     private void startVoiceRecognition() {
@@ -518,11 +631,24 @@ public class SecureBoxActivity extends AppCompatActivity {
                 TextView titleTv = noteView.findViewById(R.id.noteTitle);
                 TextView contentTv = noteView.findViewById(R.id.noteText);
                 MaterialCardView card = noteView.findViewById(R.id.cardView);
+                android.widget.ImageView imgView = noteView.findViewById(R.id.noteImage);
 
                 titleTv.setText(title);
-                contentTv.setText(content);
                 applyFontSettings(titleTv, 14);
-                applyFontSettings(contentTv, 12);
+
+                if (content.startsWith("[IMG:")) {
+                    contentTv.setVisibility(View.GONE);
+                    String path = content.substring(5, content.length() - 1);
+                    if (imgView != null) {
+                        imgView.setVisibility(View.VISIBLE);
+                        imgView.setImageURI(Uri.fromFile(new File(path)));
+                    }
+                } else {
+                    contentTv.setText(content);
+                    contentTv.setVisibility(View.VISIBLE);
+                    if (imgView != null) imgView.setVisibility(View.GONE);
+                    applyFontSettings(contentTv, 12);
+                }
 
                 card.setCardBackgroundColor(activeCategoryColor);
                 if (selectedIndices.contains(index)) {
@@ -610,16 +736,28 @@ public class SecureBoxActivity extends AppCompatActivity {
         titleEdit.setPadding(0, 0, 0, 16);
         layout.addView(titleEdit);
 
-        EditText contentEdit = new EditText(this);
-        contentEdit.setText(currentContent);
-        contentEdit.setTextColor(textColor);
-        applyFontSettings(contentEdit, 18);
-        contentEdit.setGravity(android.view.Gravity.START | android.view.Gravity.TOP);
-        contentEdit.setBackground(null);
-        contentEdit.setNestedScrollingEnabled(false);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
-        contentEdit.setLayoutParams(lp);
-        layout.addView(contentEdit);
+        final EditText contentEdit;
+        if (currentContent.startsWith("[IMG:")) {
+            contentEdit = null;
+            String path = currentContent.substring(5, currentContent.length() - 1);
+            android.widget.ImageView imageView = new android.widget.ImageView(this);
+            imageView.setImageURI(Uri.fromFile(new File(path)));
+            imageView.setScaleType(android.widget.ImageView.ScaleType.FIT_CENTER);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
+            imageView.setLayoutParams(lp);
+            layout.addView(imageView);
+        } else {
+            contentEdit = new EditText(this);
+            contentEdit.setText(currentContent);
+            contentEdit.setTextColor(textColor);
+            applyFontSettings(contentEdit, 18);
+            contentEdit.setGravity(android.view.Gravity.START | android.view.Gravity.TOP);
+            contentEdit.setBackground(null);
+            contentEdit.setNestedScrollingEnabled(false);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
+            contentEdit.setLayoutParams(lp);
+            layout.addView(contentEdit);
+        }
 
         LinearLayout btnLayout = new LinearLayout(this);
         btnLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -638,7 +776,15 @@ public class SecureBoxActivity extends AppCompatActivity {
         applyFontSettings(print, 14);
         print.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.BLACK));
         print.setTextColor(Color.WHITE);
-        print.setOnClickListener(v -> printSingleNote(titleEdit.getText().toString() + "\n\n" + contentEdit.getText().toString()));
+        print.setOnClickListener(v -> {
+            String textToPrint = titleEdit.getText().toString();
+            if (contentEdit != null) {
+                textToPrint += "\n\n" + contentEdit.getText().toString();
+            } else {
+                textToPrint += "\n\n[Image Note]";
+            }
+            printSingleNote(textToPrint);
+        });
         btnLayout.addView(print);
 
         Button save = new Button(this);
@@ -648,8 +794,11 @@ public class SecureBoxActivity extends AppCompatActivity {
         save.setTextColor(ContextCompat.getColor(this, R.color.light_green));
         save.setOnClickListener(v -> {
             String newTitle = titleEdit.getText().toString().trim();
-            String newContent = contentEdit.getText().toString().trim();
-            if (!newContent.isEmpty()) {
+            String newContent = (contentEdit != null) ? contentEdit.getText().toString().trim() : currentContent;
+            
+            if (contentEdit != null && newContent.isEmpty()) {
+                Toast.makeText(this, "Content cannot be empty", Toast.LENGTH_SHORT).show();
+            } else {
                 updateNote(key, index, (newTitle.isEmpty() ? "No Name" : newTitle) + TITLE_SEP + newContent);
                 dialog.dismiss();
             }

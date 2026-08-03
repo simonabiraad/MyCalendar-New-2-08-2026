@@ -13,6 +13,12 @@
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- suppress DeprecatedClassUsageInspection -->
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
@@ -72,6 +78,10 @@
             android:theme="@style/Theme.MyCalendar2026SAR" />
         <activity
             android:name="com.example.mycalendar2026sar.TransferActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MyCalendar2026SAR" />
+        <activity
+            android:name="com.example.mycalendar2026sar.ImageEditorActivity"
             android:exported="false"
             android:theme="@style/Theme.MyCalendar2026SAR" />
 

@@ -40,6 +40,9 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.annotation.NonNull;
 
 import com.google.android.material.card.MaterialCardView;
 
@@ -47,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 public class SecureBoxActivity extends AppCompatActivity {
 
@@ -55,7 +59,7 @@ public class SecureBoxActivity extends AppCompatActivity {
     private EditText noteTitleInput, noteContentInput;
     private ScrollView notesScrollView;
     private LinearLayout buttonContainer;
-    private SharedPreferences securePrefs, colorPrefs, fontPrefs, categoryPrefs;
+    private SharedPreferences securePrefs, colorPrefs, fontPrefs, categoryPrefs, securityPrefs;
     
     // Selection Mode
     private boolean isSelectionMode = false;
@@ -130,6 +134,7 @@ public class SecureBoxActivity extends AppCompatActivity {
         securePrefs = getSharedPreferences("SecureBoxNotes", Context.MODE_PRIVATE);
         fontPrefs = getSharedPreferences("AppFonts", Context.MODE_PRIVATE);
         categoryPrefs = getSharedPreferences("SecureBoxCategories", Context.MODE_PRIVATE);
+        securityPrefs = getSharedPreferences("SecuritySettings", Context.MODE_PRIVATE);
 
         initViews();
         loadCategories();
@@ -432,6 +437,59 @@ public class SecureBoxActivity extends AppCompatActivity {
     }
 
     private void selectCategory(String key, int color) {
+        boolean isProtected = securityPrefs.getBoolean("cat_protected_" + key, false);
+        if (isProtected) {
+            verifyCatAccess(key, color);
+        } else {
+            performSelectCategory(key, color);
+        }
+    }
+
+    private void verifyCatAccess(String key, int color) {
+        String customPass = securityPrefs.getString("custom_password", null);
+        if (customPass != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Category Locked");
+            builder.setMessage("Enter your custom password:");
+
+            final EditText input = new EditText(this);
+            input.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+            builder.setPositiveButton("Access", (dialog, which) -> {
+                String entered = input.getText().toString().trim();
+                if (entered.equals(customPass)) {
+                    performSelectCategory(key, color);
+                } else {
+                    Toast.makeText(this, "Incorrect Password", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
+        } else {
+            Executor executor = ContextCompat.getMainExecutor(this);
+            BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                    performSelectCategory(key, color);
+                }
+                @Override
+                public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                    if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                        Toast.makeText(SecureBoxActivity.this, "Auth error: " + errString, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Unlock Category")
+                    .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                    .build();
+            biometricPrompt.authenticate(promptInfo);
+        }
+    }
+
+    private void performSelectCategory(String key, int color) {
         activeCategoryKey = key;
         activeCategoryColor = color;
         notesSection.setVisibility(View.VISIBLE);
@@ -494,17 +552,78 @@ public class SecureBoxActivity extends AppCompatActivity {
     }
 
     private void showCategoryOptionsDialog(String key, Button button) {
-        String[] options = {"Rename", "Change Color", "Move Left", "Move Right", "Delete Category"};
+        String[] options = {"Rename", "Change Color", "Set Password", "Move Left", "Move Right", "Delete Category"};
         new AlertDialog.Builder(this)
                 .setTitle("Category Options")
                 .setItems(options, (dialog, which) -> {
                     if (which == 0) showRenameDialog(key, button);
                     else if (which == 1) showColorPickerForExisting(key, button);
-                    else if (which == 2) moveCategory(key, -1);
-                    else if (which == 3) moveCategory(key, 1);
-                    else if (which == 4) showDeleteCategoryConfirm(key);
+                    else if (which == 2) showCategorySecurityToggleDialog(key, button.getText().toString());
+                    else if (which == 3) moveCategory(key, -1);
+                    else if (which == 4) moveCategory(key, 1);
+                    else if (which == 5) showDeleteCategoryConfirm(key);
                 })
                 .show();
+    }
+
+    private void showCategorySecurityToggleDialog(String key, String categoryName) {
+        String prefKey = "cat_protected_" + key;
+        String[] options = {"Yes (Require Password)", "No (No Password)"};
+        new AlertDialog.Builder(this)
+                .setTitle("Require password for " + categoryName + "?")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        securityPrefs.edit().putBoolean(prefKey, true).apply();
+                        Toast.makeText(this, categoryName + " now requires a password.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        verifyThenDisableCatPassword(categoryName, prefKey);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void verifyThenDisableCatPassword(String categoryName, String prefKey) {
+        String customPass = securityPrefs.getString("custom_password", null);
+        if (customPass != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Verify Identity");
+            builder.setMessage("Enter password to disable security for " + categoryName + ":");
+            final EditText input = new EditText(this);
+            input.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            builder.setPositiveButton("Verify", (dialog, which) -> {
+                if (input.getText().toString().trim().equals(customPass)) {
+                    securityPrefs.edit().putBoolean(prefKey, false).apply();
+                    Toast.makeText(this, categoryName + " protection disabled.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Incorrect password", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
+        } else {
+            Executor executor = ContextCompat.getMainExecutor(this);
+            BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
+                @Override
+                public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                    securityPrefs.edit().putBoolean(prefKey, false).apply();
+                    Toast.makeText(SecureBoxActivity.this, categoryName + " protection disabled.", Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                    if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                        Toast.makeText(SecureBoxActivity.this, "Auth error: " + errString, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Disable " + categoryName + " Security")
+                    .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                    .build();
+            biometricPrompt.authenticate(promptInfo);
+        }
     }
 
     private void moveCategory(String key, int direction) {

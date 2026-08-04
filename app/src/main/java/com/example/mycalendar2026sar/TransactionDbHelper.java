@@ -89,6 +89,11 @@ public class TransactionDbHelper extends SQLiteOpenHelper {
         db.delete(TABLE_TRANSACTIONS, COL_ID + "=?", new String[]{String.valueOf(id)});
     }
 
+    public void clearAllTransactions() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_TRANSACTIONS, null, null);
+    }
+
     public void updateTransaction(long id, String title, double amount, String type, long timestamp, String account, String notes, String voicePath, String bills) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();

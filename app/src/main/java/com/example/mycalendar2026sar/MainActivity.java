@@ -41,7 +41,6 @@ import androidx.core.content.ContextCompat;
 import androidx.activity.OnBackPressedCallback;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
-import androidx.core.content.ContextCompat;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -280,7 +279,9 @@ public class MainActivity extends AppCompatActivity {
             popup.getMenu().add("Exit");
 
             popup.setOnMenuItemClickListener(item -> {
-                String title = item.getTitle().toString();
+                CharSequence titleCs = item.getTitle();
+                if (titleCs == null) return false;
+                String title = titleCs.toString();
                 if (title.equals("New Note")) {
                     currentDialogInput = null;
                     showNewNoteDialog("");
@@ -320,8 +321,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.secureBoxButton).setOnClickListener(v -> launchSecureBox(false));
+        findViewById(R.id.secureBoxButton).setOnLongClickListener(v -> {
+            showSecurityToggleDialog("Secure Box", "sb_password_disabled");
+            return true;
+        });
 
         findViewById(R.id.expensesButton).setOnClickListener(v -> launchExpenses());
+        findViewById(R.id.expensesButton).setOnLongClickListener(v -> {
+            showSecurityToggleDialog("Expenses", "exp_password_disabled");
+            return true;
+        });
 
         findViewById(R.id.notificationSettingsButton).setOnClickListener(v -> {
             Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
@@ -1709,7 +1718,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchSecureBox(boolean openNewNote) {
-        boolean passwordDisabled = securityPrefs.getBoolean("password_disabled", false);
+        boolean passwordDisabled = securityPrefs.getBoolean("sb_password_disabled", false);
         if (passwordDisabled) {
             Intent intent = new Intent(this, SecureBoxActivity.class);
             if (openNewNote) intent.putExtra("action", "new_note");
@@ -1778,7 +1787,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchExpenses() {
-        boolean passwordDisabled = securityPrefs.getBoolean("password_disabled", false);
+        boolean passwordDisabled = securityPrefs.getBoolean("exp_password_disabled", false);
         if (passwordDisabled) {
             startActivity(new Intent(this, ExpensesActivity.class));
             return;
@@ -1847,8 +1856,10 @@ public class MainActivity extends AppCompatActivity {
                 .setItems(options, (dialog, which) -> {
                     if (which == 0) {
                         securityPrefs.edit().remove("custom_password")
-                                .putBoolean("password_disabled", false).apply();
-                        Toast.makeText(this, "Secure Box now synchronized with phone lock.", Toast.LENGTH_SHORT).show();
+                                .putBoolean("password_disabled", false)
+                                .putBoolean("sb_password_disabled", false)
+                                .putBoolean("exp_password_disabled", false).apply();
+                        Toast.makeText(this, "Security enabled for all features (Sync with phone lock).", Toast.LENGTH_SHORT).show();
                     } else if (which == 1) {
                         showSetCustomPasswordDialog();
                     } else if (which == 2) {
@@ -1862,11 +1873,9 @@ public class MainActivity extends AppCompatActivity {
     private void confirmDisablePassword() {
         new AlertDialog.Builder(this)
                 .setTitle("Disable Password")
-                .setMessage("Are you sure you want to disable the password entirely? Anyone will be able to open the Secure Box.")
+                .setMessage("Are you sure you want to disable the password entirely? Anyone will be able to open the Secure Box and Expenses.")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    securityPrefs.edit().remove("custom_password")
-                            .putBoolean("password_disabled", true).apply();
-                    Toast.makeText(this, "Password disabled. Access is now unprotected.", Toast.LENGTH_SHORT).show();
+                    verifyThenDisablePassword("Global", "password_disabled");
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -1885,8 +1894,10 @@ public class MainActivity extends AppCompatActivity {
             String newPass = input.getText().toString().trim();
             if (!newPass.isEmpty()) {
                 securityPrefs.edit().putString("custom_password", newPass)
-                        .putBoolean("password_disabled", false).apply();
-                Toast.makeText(this, "Custom password saved!", Toast.LENGTH_SHORT).show();
+                        .putBoolean("password_disabled", false)
+                        .putBoolean("sb_password_disabled", false)
+                        .putBoolean("exp_password_disabled", false).apply();
+                Toast.makeText(this, "Custom password saved and enabled for all features!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Password cannot be empty", Toast.LENGTH_SHORT).show();
             }
@@ -1896,6 +1907,77 @@ public class MainActivity extends AppCompatActivity {
             dialog.cancel();
         });
         builder.show();
+    }
+
+    private void showSecurityToggleDialog(String featureName, String prefKey) {
+        String[] options = {"Yes (Require Password)", "No (No Password)"};
+        new AlertDialog.Builder(this)
+                .setTitle("Require password for " + featureName + "?")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        securityPrefs.edit().putBoolean(prefKey, false).apply();
+                        Toast.makeText(this, featureName + " now requires a password.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        verifyThenDisablePassword(featureName, prefKey);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void verifyThenDisablePassword(String featureName, String prefKey) {
+        String customPass = securityPrefs.getString("custom_password", null);
+        if (customPass != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Verify Identity");
+            builder.setMessage("Enter password to disable security for " + featureName + ":");
+            final EditText input = new EditText(this);
+            input.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            builder.setPositiveButton("Verify", (dialog, which) -> {
+                if (input.getText().toString().trim().equals(customPass)) {
+                    disableFeatureSecurity(featureName, prefKey);
+                } else {
+                    Toast.makeText(this, "Incorrect password", Toast.LENGTH_SHORT).show();
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
+        } else {
+            Executor executor = ContextCompat.getMainExecutor(this);
+            BiometricPrompt biometricPrompt = new BiometricPrompt(this, executor,
+                    new BiometricPrompt.AuthenticationCallback() {
+                        @Override
+                        public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                            disableFeatureSecurity(featureName, prefKey);
+                        }
+                        @Override
+                        public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                            if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                                Toast.makeText(MainActivity.this, "Auth error: " + errString, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+            BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Disable " + featureName + " Security")
+                    .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                    .build();
+            biometricPrompt.authenticate(promptInfo);
+        }
+    }
+
+    private void disableFeatureSecurity(String featureName, String prefKey) {
+        SharedPreferences.Editor editor = securityPrefs.edit();
+        if (prefKey.equals("password_disabled")) {
+            editor.putBoolean("password_disabled", true);
+            editor.putBoolean("sb_password_disabled", true);
+            editor.putBoolean("exp_password_disabled", true);
+        } else {
+            editor.putBoolean(prefKey, true);
+        }
+        editor.apply();
+        Toast.makeText(this, featureName + " protection disabled.", Toast.LENGTH_SHORT).show();
     }
 
     private void showChangeColorsDialog() {

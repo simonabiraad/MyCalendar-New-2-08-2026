@@ -4,7 +4,7 @@
             "outputFile": "com.example.mycalendar2026sar.app-mergeDebugResources-36:/values-ka/values-ka.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-ka\\values-ka.xml",
+                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-ka\\values-ka.xml",
                     "from": {
                         "startLines": "2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -23,24 +23,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\2e23e8c54d2cd0149779551f2cfa4024\\transformed\\biometric-1.1.0\\res\\values-ka\\values-ka.xml",
+                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\004a38f509eb2f72e38caf41635163c6\\transformed\\core-1.18.0\\res\\values-ka\\values-ka.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,167,258,379,512,651,793,926,1064,1168,1320,1470",
-                        "endColumns": "111,90,120,132,138,141,132,137,103,151,149,120",
-                        "endOffsets": "162,253,374,507,646,788,921,1059,1163,1315,1465,1586"
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,151,253,352,451,557,661,779",
+                        "endColumns": "95,101,98,98,105,103,117,100",
+                        "endOffsets": "146,248,347,446,552,656,774,875"
                     },
                     "to": {
-                        "startLines": "48,49,52,53,54,55,56,57,58,59,60,61",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "4485,4597,4852,4973,5106,5245,5387,5520,5658,5762,5914,6064",
-                        "endColumns": "111,90,120,132,138,141,132,137,103,151,149,120",
-                        "endOffsets": "4592,4683,4968,5101,5240,5382,5515,5653,5757,5909,6059,6180"
+                        "startLines": "38,39,40,41,42,43,44,121",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "3449,3545,3647,3746,3845,3951,4055,10890",
+                        "endColumns": "95,101,98,98,105,103,117,100",
+                        "endOffsets": "3540,3642,3741,3840,3946,4050,4168,10986"
                     }
                 },
                 {
-                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\33fee84b61b5a48a6b52fa0d24343710\\transformed\\appcompat-1.6.1\\res\\values-ka\\values-ka.xml",
+                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\33fee84b61b5a48a6b52fa0d24343710\\transformed\\appcompat-1.6.1\\res\\values-ka\\values-ka.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -57,20 +57,20 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\004a38f509eb2f72e38caf41635163c6\\transformed\\core-1.18.0\\res\\values-ka\\values-ka.xml",
+                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\2e23e8c54d2cd0149779551f2cfa4024\\transformed\\biometric-1.1.0\\res\\values-ka\\values-ka.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,151,253,352,451,557,661,779",
-                        "endColumns": "95,101,98,98,105,103,117,100",
-                        "endOffsets": "146,248,347,446,552,656,774,875"
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,167,258,379,512,651,793,926,1064,1168,1320,1470",
+                        "endColumns": "111,90,120,132,138,141,132,137,103,151,149,120",
+                        "endOffsets": "162,253,374,507,646,788,921,1059,1163,1315,1465,1586"
                     },
                     "to": {
-                        "startLines": "38,39,40,41,42,43,44,121",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "3449,3545,3647,3746,3845,3951,4055,10890",
-                        "endColumns": "95,101,98,98,105,103,117,100",
-                        "endOffsets": "3540,3642,3741,3840,3946,4050,4168,10986"
+                        "startLines": "48,49,52,53,54,55,56,57,58,59,60,61",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "4485,4597,4852,4973,5106,5245,5387,5520,5658,5762,5914,6064",
+                        "endColumns": "111,90,120,132,138,141,132,137,103,151,149,120",
+                        "endOffsets": "4592,4683,4968,5101,5240,5382,5515,5653,5757,5909,6059,6180"
                     }
                 }
             ]

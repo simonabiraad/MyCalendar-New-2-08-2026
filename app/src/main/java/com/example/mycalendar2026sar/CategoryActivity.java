@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,7 +85,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     private void updateList() {
         List<CategoryItem> items = new ArrayList<>();
-        items.add(new CategoryItem("Other", "➕")); // Add Other at top
+        items.add(new CategoryItem("Other", R.drawable.ic_cat_other_color)); // Add Other at top
         if (isExpenseView) {
             addExpenseItems(items);
         } else {
@@ -178,7 +179,7 @@ public class CategoryActivity extends AppCompatActivity {
         };
         for (int id : resIds) {
             String name = getString(id);
-            items.add(new CategoryItem(name, getCategoryEmoji(name)));
+            items.add(new CategoryItem(name, getCategoryLogo(name)));
         }
     }
 
@@ -189,69 +190,48 @@ public class CategoryActivity extends AppCompatActivity {
         };
         for (int id : resIds) {
             String name = getString(id);
-            items.add(new CategoryItem(name, getCategoryEmoji(name)));
+            items.add(new CategoryItem(name, getCategoryLogo(name)));
         }
     }
 
-    private String getCategoryEmoji(String name) {
-        if (name.contains("Salary")) return "💰";
-        if (name.contains("Bonus")) return "🎁";
-        if (name.contains("Business")) return "💼";
-        if (name.contains("Investment")) return "📈";
-        if (name.contains("Income")) return "💵";
-        if (name.contains("Food")) return "🍔";
-        if (name.contains("Groceries")) return "🛒";
-        if (name.contains("Rent")) return "🏠";
-        if (name.contains("Bills")) return "🧾";
-        if (name.contains("Fuel")) return "⛽";
-        if (name.contains("Transport")) return "🚌";
-        if (name.contains("Medicine") || name.contains("Health")) return "💊";
-        if (name.contains("Shopping") || name.contains("Clothes")) return "🛍️";
-        if (name.contains("Entertainment")) return "🎬";
-        if (name.contains("Mobile") || name.contains("Internet")) return "📱";
-        if (name.contains("Electricity")) return "💡";
-        if (name.contains("Water")) return "💧";
-        if (name.contains("Education")) return "📚";
-        if (name.contains("Fitness")) return "🏋️";
-        if (name.contains("Travel") || name.contains("Tickets")) return "✈️";
-        if (name.contains("Insurance")) return "🛡️";
-        if (name.contains("EMI") || name.contains("Card")) return "💳";
-        if (name.contains("Taxi")) return "🚕";
-        if (name.contains("Car")) return "🚗";
-        if (name.contains("Bike") || name.contains("Rickshaw")) return "🏍️";
-        if (name.contains("Gifts")) return "🎁";
-        if (name.contains("Home") || name.contains("House")) return "🏡";
-        if (name.contains("Cigarette") || name.contains("Drinks")) return "🍺";
-        if (name.contains("Fast Food")) return "🍕";
-        if (name.contains("Festivals")) return "🏮";
-        if (name.contains("Furniture")) return "🛋️";
-        if (name.contains("Gas")) return "🔥";
-        if (name.contains("Laundry")) return "🧺";
-        if (name.contains("Maid")) return "🧹";
-        if (name.contains("Parking")) return "🅿️";
-        if (name.contains("Party")) return "🥳";
-        if (name.contains("Grooming")) return "✂️";
-        if (name.contains("Pet")) return "🐾";
-        if (name.contains("Repair")) return "🛠️";
-        if (name.contains("Hotel")) return "🏨";
-        if (name.contains("Savings")) return "🐷";
-        if (name.contains("Social")) return "🤝";
-        if (name.contains("Stationery")) return "✏️";
-        if (name.contains("Taxes")) return "🏛️";
-        if (name.contains("Toll")) return "🛣️";
-        if (name.contains("Toys") || name.contains("Kids")) return "🧸";
-        if (name.contains("Vacation")) return "🌴";
+    private int getCategoryLogo(String name) {
+        String lower = name.toLowerCase();
+        if (lower.contains("salary") || lower.contains("bonus") || lower.contains("income") || lower.contains("investment")) 
+            return R.drawable.ic_cat_money_color;
+        if (lower.contains("business")) return R.drawable.ic_cat_business_color;
+        if (lower.contains("food") || lower.contains("fast food") || lower.contains("drinks") || lower.contains("fruits") || lower.contains("restaurant") || lower.contains("milk")) 
+            return R.drawable.ic_cat_food_color;
+        if (lower.contains("groceries")) return R.drawable.ic_cat_grocery_color;
+        if (lower.contains("rent") || lower.contains("home") || lower.contains("house")) return R.drawable.ic_cat_rent_color;
+        if (lower.contains("bills") || lower.contains("taxes") || lower.contains("toll") || lower.contains("emi") || lower.contains("card") || lower.contains("insurance")) 
+            return R.drawable.ic_cat_bill_color;
+        if (lower.contains("fuel") || lower.contains("gas")) return R.drawable.ic_cat_fuel_color;
+        if (lower.contains("transport") || lower.contains("taxi") || lower.contains("car") || lower.contains("bike") || lower.contains("rickshaw") || lower.contains("driver")) 
+            return R.drawable.ic_cat_transport_color;
+        if (lower.contains("medicine") || lower.contains("health") || lower.contains("fitness")) return R.drawable.ic_cat_health_color;
+        if (lower.contains("shopping") || lower.contains("clothes") || lower.contains("gifts") || lower.contains("stationery") || lower.contains("grooming") || lower.contains("pet")) 
+            return R.drawable.ic_cat_shop_color;
+        if (lower.contains("entertainment") || lower.contains("hobby") || lower.contains("festivals") || lower.contains("party") || lower.contains("social")) 
+            return R.drawable.ic_cat_ent_color;
+        if (lower.contains("mobile") || lower.contains("internet") || lower.contains("cable") || lower.contains("phone")) 
+            return R.drawable.ic_cat_mobile_color;
+        if (lower.contains("electricity") || lower.contains("water") || lower.contains("repair") || lower.contains("maintenance") || lower.contains("utility")) 
+            return R.drawable.ic_cat_utility_color;
+        if (lower.contains("education") || lower.contains("kids") || lower.contains("toys") || lower.contains("baby")) 
+            return R.drawable.ic_cat_edu_color;
+        if (lower.contains("travel") || lower.contains("vacation") || lower.contains("tickets") || lower.contains("hotel") || lower.contains("air")) 
+            return R.drawable.ic_cat_travel_color;
         
-        return "📝";
+        return R.drawable.ic_cat_other_color;
     }
 
     private static class CategoryItem {
         String name;
-        String emoji;
+        int logoRes;
 
-        CategoryItem(String name, String emoji) {
+        CategoryItem(String name, int logoRes) {
             this.name = name;
-            this.emoji = emoji;
+            this.logoRes = logoRes;
         }
     }
 
@@ -295,7 +275,8 @@ public class CategoryActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             CategoryItem item = filteredItems.get(position);
             holder.nameText.setText(item.name);
-            holder.emojiText.setText(item.emoji);
+            holder.logoImg.setImageResource(item.logoRes);
+            holder.logoImg.setImageTintList(null); // Ensure real colors are shown
             holder.itemView.setOnClickListener(v -> listener.onCategoryClick(item));
         }
 
@@ -306,12 +287,12 @@ public class CategoryActivity extends AppCompatActivity {
 
         static class ViewHolder extends RecyclerView.ViewHolder {
             TextView nameText;
-            TextView emojiText;
+            ImageView logoImg;
 
             ViewHolder(View view) {
                 super(view);
                 nameText = view.findViewById(R.id.categoryName);
-                emojiText = view.findViewById(R.id.categoryIconText);
+                logoImg = view.findViewById(R.id.categoryIconImg);
             }
         }
     }

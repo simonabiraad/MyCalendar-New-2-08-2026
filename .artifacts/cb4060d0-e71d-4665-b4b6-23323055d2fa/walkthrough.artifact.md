@@ -1,81 +1,37 @@
-# Walkthrough - Colorful Realistic Icons for Expenses Menu
+# Walkthrough - Vibrant Colorful Category Logos
 
-I have completely overhauled the Expenses drawer menu with a set of custom, "real and colored" logos for every item.
+I have enhanced the category icons across the app, ensuring they appear in their full, realistic colors without any monochromatic tinting.
 
 ## Key Visual Enhancements
 
-### 🎨 16 Custom Colorful Logos
-Every item in the drawer menu now has its own unique, realistic multi-colored icon. For example:
-- **Rate Us**: A shiny **Golden Star**.
-- **Account Summary**: A green **Wallet**.
-- **Deleted Transactions**: A red **Trash Can**.
-- **Notebook**: An orange **Spiral Notebook**.
-- **Cash Calculator**: A green **Digital Calculator**.
+### 🎨 Realistic Multi-Colored Logos
+- **True Colors**: I have disabled the automatic icon tinting in both the **Cach In/Out** selection grid and the **Category** list. This means the vibrant greens of the money stack, the red of the bills, and the multi-colored chart of the report are now fully visible.
+- **Improved Mapping**: Expanded the logic to match more specific category names to the best available high-quality logos:
+    - **Air Tickets/Vacation**: Vibrant blue airplane/globe logos.
+    - **Rent/Home**: Realistic brown/red house icon.
+    - **Education/Kids**: Colorful book and toy icons.
+    - **Bills/Insurance**: Grey and blue professional document logos.
 
-### ✨ Preserved Colors (No Grey Tint)
-I have updated the Expenses screen to ensure that Android does not automatically "tint" these icons to grey or black. This allows the full, vibrant colors of each logo to shine through exactly as designed.
+### 🏢 Professional Software Interface
+- **Floating Design**: Combined with the previous removal of background circles, these colorful logos now appear as clean, sharp "floating" elements that give the software a premium, modern feel.
+- **Consistent Experience**: The same high-quality visual logic is now applied everywhere you interact with categories.
 
 ## Changes Made
 
-### New Assets Created
-I created 16 new high-quality vector files in the [drawables](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable) folder, including:
-- [ic_menu_rate_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_rate_color.xml)
-- [ic_menu_acc_summary_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_acc_summary_color.xml)
-- [ic_menu_trash_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_trash_color.xml)
-- ...and 13 others.
-
-### Updated Components
-- **Menu Layout**: [menu_expenses_drawer.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/menu/menu_expenses_drawer.xml) now links each item to its corresponding colored asset.
-- **Activity Logic**: [ExpensesActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/ExpensesActivity.java) now disables default icon tinting on the side menu.
+### Application Logic
+- **[CategoryActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/CategoryActivity.java)**:
+    - Refined `getCategoryLogo` with a comprehensive keyword-based mapping system.
+    - Updated `CategoryAdapter` to disable `imageTintList`, allowing realistic colors to show.
+- **[ExpensesActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/ExpensesActivity.java)**:
+    - Synced the `getCategoryLogo` logic with the main category screen.
+    - Ensured the "Add Transaction" selection grid also displays full-color logos.
 
 ## How to Test
-1.  Open the **Expenses** screen.
-2.  Tap the **Drawer menu icon** (three horizontal lines) at the top left.
-3.  Observe the vibrant, multi-colored icons for every item in the list!
+1.  Open **Expenses**.
+2.  Tap **Cach In** or **Cach Out**.
+3.  Observe the category grid—notice that icons like **Food**, **Salary**, and **Rent** are now multi-colored and vibrant.
+4.  Navigate to the **Category** screen (from the three-dot menu).
+5.  Browse the list and verify that items like **Air Tickets**, **Car Insurance**, and **Bonus** all have their unique "real and colored" logos.
 
 > [!TIP]
-> The "Rate Us" star and "Cash Calculator" icons use metallic and digital colors to give a more "real" look to the software interface.
-
----
-
-## 5. AI Voice Assistant and Colorful Overflow Icons for Expenses
-
-I have integrated the AI Voice Assistant into the Expenses section and updated the overflow menu with realistic, colorful logos.
-
-### 🎙 AI Voice Assistant in Expenses
-- **What's New**: A microphone button has been added next to the search bar in the Expenses screen.
-- **Commands**: You can now speak to manage your finances:
-    - *"Add cash in"* or *"Add income"*
-    - *"Show categories"*
-    - *"Go back to calendar"*
-    - *"Monthly expenses"* or *"Today's expenses"*
-
-### 🎨 Realistic Overflow Logos
-- **Visual Upgrade**: The menu next to the search bar (three dots) now features vibrant, multi-colored icons for every item by name:
-    - **Category**: Yellow folder.
-    - **Notes**: Orange notebook.
-    - **Cash In/Out**: Green and Red realistic money icons.
-    - **Print**: Teal professional printer.
-    - **Sort**: Blue directional arrows.
-
-### How to Test
-1.  Navigate to **Expenses**.
-2.  Tap the **🎙 Button** next to search and say: **"Go back to calendar"**.
-3.  Tap the **Three-Dot Menu** next to search and verify that **every list item** has a real, colored logo next to its name.
-
----
-
-## 6. Clean Category Logos
-
-I have refined the category section by removing the background circles from the icons, giving them a cleaner and more modern "floating" appearance.
-
-### Changes Made
-- **Simplified Design**: Removed the grey circular background and green stroke from all category mini-logos.
-- **Improved Focus**: The emojis and icons now stand out directly against the dark background, making them easier to identify at a glance.
-- **Unified Layout**: Updated both the category selection chips and the full category list.
-
-### How to Test
-1.  Navigate to **Expenses**.
-2.  Tap on **Daily** or **All** and then tap the **Add Transaction** button (Cash In/Cash Out).
-3.  Look at the category selection grid—notice the icons no longer have circles around them.
-4.  Alternatively, go to the **Category** screen via the overflow menu to see the clean list view.
+> Each icon is now contextually aware of the category name, ensuring that "Salary" and "Bonus" both get the professional money logo, while "Air" and "Tickets" both trigger the plane logo!

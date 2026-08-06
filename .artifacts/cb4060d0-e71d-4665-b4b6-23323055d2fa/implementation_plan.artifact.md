@@ -1,45 +1,36 @@
-# Implementation Plan - AI Voice Assistant and Colorful Overflow Icons for Expenses
+# Implementation Plan - Vibrant Colorful Category Logos
 
-The user wants two main things in the Expenses screen:
-1.  Add the **AI Voice Assistant** (the "logo voice") next to the search button.
-2.  Update the **Overflow Menu** (the list next to the search button) to have "real and colored" logos for every item.
+This plan aims to ensure all categories in the Expenses and Category screens use high-quality, multi-colored "real" logos, and to fix the issue where icons appear monochromatic (single-colored).
+
+## User Review Required
+
+> [!IMPORTANT]
+> - I will disable automatic icon tinting in the category lists to ensure the "real and colored" designs are visible.
+> - I will expand the logo mapping to ensure more specific icons are matched to category names (e.g., "Air Tickets" getting a Plane icon, "Bonus" getting a Money icon).
 
 ## Proposed Changes
 
-### 1. UI Enhancements
+### 1. Unified Logo Logic
 
-#### [MODIFY] [activity_expenses.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/layout/activity_expenses.xml)
-- Add the `aiAssistantButton` (🎙) next to the `expensesSearchView`.
-- Style it similarly to the one in `MainActivity`.
+#### [MODIFY] [CategoryActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/CategoryActivity.java)
+- **Refine `getCategoryLogo(String name)`**:
+    - Add mappings for "Air Tickets", "Auto Rickshaw", "Bike", "Bills", "Cable TV", "Car", "Car Insurance", "Card Fee", "Cigarette", "Clothes", etc.
+    - Ensure keywords are checked efficiently (e.g., "Air" or "Tickets" -> Plane icon).
+- **Update `CategoryAdapter`**:
+    - Call `holder.logoImg.setImageTintList(null);` in `onBindViewHolder` to prevent the system from applying a single color tint to the colorful logos.
 
-### 2. Colorful Assets for Overflow Menu
-
-I will create new colorful vector drawables for the items in the overflow menu:
-- **Category**: [ic_menu_category_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_category_color.xml) - Yellow folder.
-- **Notes**: [ic_menu_notes_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_notes_color.xml) - Blue notepad.
-- **Date/Range**: [ic_menu_date_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_date_color.xml) - Red calendar.
-- **Cash In/Out**: [ic_menu_cash_in_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_cash_in_color.xml), [ic_menu_cash_out_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_cash_out_color.xml) - Green and Red money icons.
-- **Print**: [ic_menu_print_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_print_color.xml) - Teal printer.
-- **Profile/Address**: [ic_menu_profile_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_profile_color.xml), [ic_menu_address_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_address_color.xml) - Orange person and marker.
-
-### 3. Expenses Component Logic
-
-#### [MODIFY] [menu_expenses_overflow.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/menu/menu_expenses_overflow.xml)
-- Assign the new colorful icons to every menu item.
+### 2. Expenses Grid Update
 
 #### [MODIFY] [ExpensesActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/ExpensesActivity.java)
-- Implement `isVoiceCommandMode` and `processVoiceCommand(String command)` logic.
-- Integrate the `voiceRecognitionLauncher` to handle AI Assistant commands.
-- Commands will include: "Add cash in", "Show categories", "Change account", "Back to calendar", etc.
-- Ensure the AI Assistant button triggers the recognition.
+- Update the `getCategoryLogo` method to match the comprehensive list in `CategoryActivity`.
+- In the `showAddTransactionDialog` adapter, call `logo.setImageTintList(null);` to preserve the vibrant colors in the selection grid.
 
 ## Verification Plan
 
 ### Manual Verification
-1.  **AI Assistant Check**:
-    - Tap the **🎙 button** next to the search bar in Expenses.
-    - Say "Go back to calendar" and verify it navigates to the main screen.
-    - Say "Open categories" and verify the Category activity opens.
-2.  **Overflow Menu Check**:
-    - Tap the **three-dot menu** next to the search bar.
-    - Verify that every item in the list (Category, Notes, Date, etc.) now has a **real and colored** logo next to it.
+1.  Open **Expenses**.
+2.  Tap **Cach In**.
+3.  **Expected Result**: The selection grid shows vibrant, multi-colored logos (not just green ones).
+4.  Navigate to the **Category** screen (from the overflow menu).
+5.  **Expected Result**: The long list of categories displays colorful icons for "Air Tickets" (Plane), "Salary" (Cash), "Food" (Burger), etc., and they are not tinted blue or grey.
+6.  Search for a category (e.g., "Fuel") and verify the correct colorful icon remains.

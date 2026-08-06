@@ -246,9 +246,9 @@ public class AddTransactionActivity extends AppCompatActivity {
     private void showBillsOptions() {
         String[] options = {"Camera", "Gallery", "PDF"};
         int[] icons = {
-                android.R.drawable.ic_menu_camera,
-                android.R.drawable.ic_menu_gallery,
-                android.R.drawable.ic_menu_save
+                R.drawable.ic_notif_camera_color,
+                R.drawable.ic_notif_gallery_color,
+                R.drawable.ic_pdf_logo
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert);
@@ -261,6 +261,7 @@ public class AddTransactionActivity extends AppCompatActivity {
                 android.view.View view = super.getView(position, convertView, parent);
                 ImageView icon = view.findViewById(R.id.itemIcon);
                 icon.setImageResource(icons[position]);
+                icon.setImageTintList(null); // Remove default tinting
                 return view;
             }
         };

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_new_note"
+        android:icon="@drawable/ic_menu_new_note_color"
+        android:title="New Note" />
+    <item
+        android:id="@+id/action_new_voice_note"
+        android:icon="@drawable/ic_menu_voice_note_color"
+        android:title="New Voice Note" />
+    <item
+        android:id="@+id/action_new_sticky_note"
+        android:icon="@drawable/ic_menu_sticky_note_color"
+        android:title="New Sticky Note" />
+    <item
+        android:id="@+id/action_secure_box"
+        android:icon="@drawable/ic_menu_accounts_color"
+        android:title="Secure Box" />
+    <item
+        android:id="@+id/action_change_password"
+        android:icon="@drawable/ic_menu_password_color"
+        android:title="Change Password" />
+    <item
+        android:id="@+id/action_notification_settings"
+        android:icon="@drawable/ic_menu_settings_color"
+        android:title="Notification Settings" />
+    <item
+        android:id="@+id/action_toggle_quick_bar"
+        android:icon="@drawable/ic_menu_quick_bar_color"
+        android:title="Toggle Quick Note Bar" />
+    <item
+        android:id="@+id/action_change_colors"
+        android:icon="@drawable/ic_menu_color_palette"
+        android:title="Change Colors" />
+    <item
+        android:id="@+id/action_change_font"
+        android:icon="@drawable/ic_menu_font_color"
+        android:title="Change Font" />
+    <item
+        android:id="@+id/action_backup_data"
+        android:icon="@drawable/ic_menu_backup_color"
+        android:title="Backup Data" />
+    <item
+        android:id="@+id/action_print"
+        android:icon="@drawable/ic_menu_print_color"
+        android:title="Print" />
+    <item
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_menu_info_color"
+        android:title="About" />
+    <item
+        android:id="@+id/action_exit"
+        android:icon="@drawable/ic_menu_exit_color"
+        android:title="Exit" />
+</menu>

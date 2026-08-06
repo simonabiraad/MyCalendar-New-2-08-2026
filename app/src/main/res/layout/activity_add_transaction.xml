@@ -85,8 +85,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_today"
-                app:tint="@color/light_green" />
+                android:src="@drawable/ic_menu_calendar_color" />
         </LinearLayout>
 
         <LinearLayout
@@ -112,8 +111,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_recent_history"
-                app:tint="@color/light_green" />
+                android:src="@drawable/ic_notif_clock_color" />
         </LinearLayout>
     </LinearLayout>
 
@@ -145,8 +143,7 @@
             android:id="@+id/btnCalculator"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_add"
-            app:tint="@color/light_green" />
+            android:src="@drawable/ic_menu_calc_color" />
     </LinearLayout>
 
     <LinearLayout
@@ -176,8 +173,7 @@
             android:id="@+id/btnSelectCategory"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_agenda"
-            app:tint="@color/light_green" />
+            android:src="@drawable/ic_menu_category_color" />
     </LinearLayout>
 
     <LinearLayout
@@ -207,8 +203,7 @@
             android:id="@+id/btnVoice"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@android:drawable/ic_btn_speak_now"
-            app:tint="@color/light_green" />
+            android:src="@drawable/ic_menu_voice_note_color" />
     </LinearLayout>
 
     <LinearLayout
@@ -224,8 +219,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:backgroundTint="@color/gray"
-            android:drawableStart="@android:drawable/ic_menu_camera"
-            android:drawableTint="@color/white"
+            android:drawableStart="@drawable/ic_notif_camera_color"
             android:paddingStart="12dp"
             android:text="Add Bills"
             android:textAllCaps="false"
@@ -255,23 +249,23 @@
             app:cornerRadius="8dp" />
 
         <Button
-            android:id="@+id/btnSaveExit"
+            android:id="@+id/btnSaveContinue"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/light_green"
-            android:text="Save And Exit"
+            android:backgroundTint="@color/green"
+            android:text="Save And Continue"
             android:textAllCaps="false"
             app:cornerRadius="8dp" />
 
         <Button
-            android:id="@+id/btnSaveContinue"
+            android:id="@+id/btnSaveExit"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/green"
-            android:text="Save And Continue"
+            android:backgroundTint="@color/light_green"
+            android:text="Save And Exit"
             android:textAllCaps="false"
             app:cornerRadius="8dp" />
     </LinearLayout>

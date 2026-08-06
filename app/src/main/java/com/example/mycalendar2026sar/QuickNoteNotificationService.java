@@ -16,6 +16,10 @@ public class QuickNoteNotificationService extends Service {
 
     public static final String ACTION_VOICE = "com.example.mycalendar2026sar.ACTION_VOICE";
     public static final String ACTION_NOTE = "com.example.mycalendar2026sar.ACTION_NOTE";
+    public static final String ACTION_SECURE_BOX = "com.example.mycalendar2026sar.ACTION_SECURE_BOX";
+    public static final String ACTION_EXPENSES = "com.example.mycalendar2026sar.ACTION_EXPENSES";
+    public static final String ACTION_SETTINGS = "com.example.mycalendar2026sar.ACTION_SETTINGS";
+
     private static final String CHANNEL_ID = "quick_note_channel";
     private static final int NOTIF_ID = 1001;
 
@@ -41,7 +45,28 @@ public class QuickNoteNotificationService extends Service {
         noteIntent.setAction(ACTION_NOTE);
         noteIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent notePendingIntent = PendingIntent.getActivity(this, 1, noteIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        remoteViews.setOnClickPendingIntent(R.id.notif_note_area, notePendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.notif_note_btn, notePendingIntent);
+
+        // Intent for Secure Box
+        Intent sbIntent = new Intent(this, MainActivity.class);
+        sbIntent.setAction(ACTION_SECURE_BOX);
+        sbIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent sbPendingIntent = PendingIntent.getActivity(this, 2, sbIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        remoteViews.setOnClickPendingIntent(R.id.notif_sb_btn, sbPendingIntent);
+
+        // Intent for Expenses
+        Intent expIntent = new Intent(this, MainActivity.class);
+        expIntent.setAction(ACTION_EXPENSES);
+        expIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent expPendingIntent = PendingIntent.getActivity(this, 3, expIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        remoteViews.setOnClickPendingIntent(R.id.notif_expenses_btn, expPendingIntent);
+
+        // Intent for Settings
+        Intent settingsIntent = new Intent(this, MainActivity.class);
+        settingsIntent.setAction(ACTION_SETTINGS);
+        settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent settingsPendingIntent = PendingIntent.getActivity(this, 4, settingsIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        remoteViews.setOnClickPendingIntent(R.id.notif_settings_btn, settingsPendingIntent);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_menu_edit)

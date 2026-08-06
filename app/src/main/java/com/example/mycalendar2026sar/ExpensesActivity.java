@@ -1,10 +1,13 @@
 package com.example.mycalendar2026sar;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -442,6 +446,18 @@ public class ExpensesActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                new androidx.appcompat.app.AlertDialog.Builder(ExpensesActivity.this)
+                        .setTitle("Leave Page")
+                        .setMessage("Are you sure you want to leave this page?")
+                        .setPositiveButton("Yes", (dialog, which) -> finish())
+                        .setNegativeButton("No", null)
+                        .show();
+            }
+        });
         
         updateFilterButtonsUI();
     }
@@ -633,11 +649,12 @@ public class ExpensesActivity extends AppCompatActivity {
             @Override
             public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                 View item = holder.itemView;
-                TextView icon = item.findViewById(R.id.categoryIconText);
+                ImageView logo = item.findViewById(R.id.categoryIconImg);
                 TextView name = item.findViewById(R.id.categoryName);
                 
                 String cat = categories.get(position);
-                icon.setText(getCategoryEmoji(cat));
+                logo.setImageResource(getCategoryLogo(cat));
+                logo.setImageTintList(null); // Ensure real colors are shown
                 name.setText(cat);
                 
                 item.setOnClickListener(v -> {
@@ -719,39 +736,78 @@ public class ExpensesActivity extends AppCompatActivity {
             return;
         }
 
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this, R.style.CustomAlertDialogTheme);
-        builder.setTitle("Transaction Note");
-        builder.setMessage(note);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_transaction_note, null);
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
 
-        builder.setPositiveButton("Edit", (dialog, which) -> {
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        TextView messageTv = dialogView.findViewById(R.id.dialogMessage);
+        messageTv.setText(note);
+
+        dialogView.findViewById(R.id.btnEdit).setOnClickListener(v -> {
+            dialog.dismiss();
             Intent intent = new Intent(this, AddTransactionActivity.class);
             intent.putExtra("transaction_id", transaction.getId());
             startActivity(intent);
         });
 
-        builder.setNegativeButton("Delete", (dialog, which) -> confirmDeleteTransaction(transaction));
+        dialogView.findViewById(R.id.btnDelete).setOnClickListener(v -> {
+            dialog.dismiss();
+            confirmDeleteTransaction(transaction);
+        });
 
-        builder.setNeutralButton("Update", (dialog, which) -> showQuickUpdateNoteDialog(transaction));
+        dialogView.findViewById(R.id.btnUpdate).setOnClickListener(v -> {
+            dialog.dismiss();
+            showQuickUpdateNoteDialog(transaction);
+        });
 
-        builder.show();
+        dialog.show();
     }
 
     private void showQuickUpdateNoteDialog(Transaction transaction) {
-        final EditText input = new EditText(this);
-        input.setText(transaction.getNotes());
-        input.setPadding(40, 20, 40, 20);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_transaction_note, null);
+        TextView titleTv = dialogView.findViewById(R.id.dialogTitle);
+        TextView messageTv = dialogView.findViewById(R.id.dialogMessage);
+        Button btnUpdate = dialogView.findViewById(R.id.btnUpdate);
+        Button btnDelete = dialogView.findViewById(R.id.btnDelete);
+        Button btnEdit = dialogView.findViewById(R.id.btnEdit);
 
-        new androidx.appcompat.app.AlertDialog.Builder(this, R.style.CustomAlertDialogTheme)
-                .setTitle("Update Note")
-                .setView(input)
-                .setPositiveButton("Update", (dialog, which) -> {
-                    String newNote = input.getText().toString().trim();
-                    transactionDbHelper.updateTransactionNote(transaction.getId(), newNote);
-                    refreshTransactionsList();
-                    Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        titleTv.setText("Update Note");
+        messageTv.setVisibility(View.GONE);
+
+        EditText input = new EditText(this);
+        input.setText(transaction.getNotes());
+        input.setTextColor(Color.WHITE);
+        input.setPadding(0, 20, 0, 20);
+        ((LinearLayout)dialogView).addView(input, 2); // Insert after title
+
+        btnUpdate.setText("SAVE");
+        btnDelete.setText("CANCEL");
+        btnEdit.setVisibility(View.GONE);
+
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        }
+
+        btnDelete.setOnClickListener(v -> dialog.dismiss());
+
+        btnUpdate.setOnClickListener(v -> {
+            String newNote = input.getText().toString().trim();
+            transactionDbHelper.updateTransactionNote(transaction.getId(), newNote);
+            refreshTransactionsList();
+            Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     @Override
@@ -1026,38 +1082,34 @@ public class ExpensesActivity extends AppCompatActivity {
         }
     }
 
-    private String getCategoryEmoji(String categoryName) {
-        switch (categoryName) {
-            case "Other": return "➕";
-            case "Salary": return "💰";
-            case "Bonus": return "🎁";
-            case "Business": return "💼";
-            case "Investment Income": return "📈";
-            case "Other Income": return "💵";
-            case "Food": return "🍔";
-            case "Groceries": return "🛒";
-            case "Rent": return "🏠";
-            case "Bills": return "🧾";
-            case "Fuel": return "⛽";
-            case "Transport": return "🚌";
-            case "Medicine": return "💊";
-            case "Shopping": return "🛍️";
-            case "Entertainment": return "🎬";
-            case "Mobile": return "📱";
-            case "Internet": return "🌐";
-            case "Electricity": return "💡";
-            case "Water": return "💧";
-            case "Education": return "📚";
-            case "Fitness": return "🏋️";
-            case "Travel": return "✈️";
-            case "Insurance": return "🛡️";
-            case "EMI": return "💳";
-            case "Taxi": return "🚕";
-            case "Car": return "🚗";
-            case "Bike": return "🏍️";
-            case "Gifts": return "🎁";
-            case "Other Expense": return "💸";
-            default: return "📝";
-        }
+    private int getCategoryLogo(String name) {
+        String lower = name.toLowerCase();
+        if (lower.contains("salary") || lower.contains("bonus") || lower.contains("income") || lower.contains("investment")) 
+            return R.drawable.ic_cat_money_color;
+        if (lower.contains("business")) return R.drawable.ic_cat_business_color;
+        if (lower.contains("food") || lower.contains("fast food") || lower.contains("drinks") || lower.contains("fruits") || lower.contains("restaurant") || lower.contains("milk")) 
+            return R.drawable.ic_cat_food_color;
+        if (lower.contains("groceries")) return R.drawable.ic_cat_grocery_color;
+        if (lower.contains("rent") || lower.contains("home") || lower.contains("house")) return R.drawable.ic_cat_rent_color;
+        if (lower.contains("bills") || lower.contains("taxes") || lower.contains("toll") || lower.contains("emi") || lower.contains("card") || lower.contains("insurance")) 
+            return R.drawable.ic_cat_bill_color;
+        if (lower.contains("fuel") || lower.contains("gas")) return R.drawable.ic_cat_fuel_color;
+        if (lower.contains("transport") || lower.contains("taxi") || lower.contains("car") || lower.contains("bike") || lower.contains("rickshaw") || lower.contains("driver")) 
+            return R.drawable.ic_cat_transport_color;
+        if (lower.contains("medicine") || lower.contains("health") || lower.contains("fitness")) return R.drawable.ic_cat_health_color;
+        if (lower.contains("shopping") || lower.contains("clothes") || lower.contains("gifts") || lower.contains("stationery") || lower.contains("grooming") || lower.contains("pet")) 
+            return R.drawable.ic_cat_shop_color;
+        if (lower.contains("entertainment") || lower.contains("hobby") || lower.contains("festivals") || lower.contains("party") || lower.contains("social")) 
+            return R.drawable.ic_cat_ent_color;
+        if (lower.contains("mobile") || lower.contains("internet") || lower.contains("cable") || lower.contains("phone")) 
+            return R.drawable.ic_cat_mobile_color;
+        if (lower.contains("electricity") || lower.contains("water") || lower.contains("repair") || lower.contains("maintenance") || lower.contains("utility")) 
+            return R.drawable.ic_cat_utility_color;
+        if (lower.contains("education") || lower.contains("kids") || lower.contains("toys") || lower.contains("baby")) 
+            return R.drawable.ic_cat_edu_color;
+        if (lower.contains("travel") || lower.contains("vacation") || lower.contains("tickets") || lower.contains("hotel") || lower.contains("air")) 
+            return R.drawable.ic_cat_travel_color;
+        
+        return R.drawable.ic_cat_other_color;
     }
 }

@@ -10,13 +10,11 @@
     android:clickable="true"
     android:focusable="true">
 
-    <TextView
-        android:id="@+id/categoryIconText"
+    <ImageView
+        android:id="@+id/categoryIconImg"
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:gravity="center"
-        android:text="🍔"
-        android:textSize="24sp" />
+        android:scaleType="fitCenter" />
 
     <TextView
         android:id="@+id/categoryName"

@@ -266,56 +266,52 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.mainMenuButton).setOnClickListener(v -> {
             android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
-            popup.getMenu().add("New Note");
-            popup.getMenu().add("New Voice Note");
-            popup.getMenu().add("New Sticky Note");
-            popup.getMenu().add("Secure Box");
-            popup.getMenu().add("Change Password");
-            popup.getMenu().add("Notification Settings");
-            popup.getMenu().add("Toggle Quick Note Bar");
-            popup.getMenu().add("Change Colors");
-            popup.getMenu().add("Change Font");
-            popup.getMenu().add("Backup Data");
-            popup.getMenu().add("Print");
-            popup.getMenu().add("About");
-            popup.getMenu().add("Exit");
+            popup.getMenuInflater().inflate(R.menu.main_popup_menu, popup.getMenu());
+
+            // Force icons to show
+            try {
+                java.lang.reflect.Field field = popup.getClass().getDeclaredField("mPopup");
+                field.setAccessible(true);
+                Object menuHelper = field.get(popup);
+                Class<?> classPopupHelper = Class.forName(menuHelper.getClass().getName());
+                java.lang.reflect.Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                setForceIcons.invoke(menuHelper, true);
+            } catch (Exception ignored) {}
 
             popup.setOnMenuItemClickListener(item -> {
-                CharSequence titleCs = item.getTitle();
-                if (titleCs == null) return false;
-                String title = titleCs.toString();
-                if (title.equals("New Note")) {
+                int id = item.getItemId();
+                if (id == R.id.action_new_note) {
                     currentDialogInput = null;
                     showNewNoteDialog("");
-                } else if (title.equals("New Voice Note")) {
+                } else if (id == R.id.action_new_voice_note) {
                     currentDialogInput = null;
                     startVoiceRecognition();
-                } else if (title.equals("New Sticky Note")) {
+                } else if (id == R.id.action_new_sticky_note) {
                     launchSecureBox(true);
-                } else if (title.equals("Secure Box")) {
+                } else if (id == R.id.action_secure_box) {
                     launchSecureBox(false);
-                } else if (title.equals("Change Password")) {
+                } else if (id == R.id.action_change_password) {
                     showChangePasswordDialog();
-                } else if (title.equals("Notification Settings")) {
+                } else if (id == R.id.action_notification_settings) {
                     findViewById(R.id.notificationSettingsButton).performClick();
-                } else if (title.equals("Toggle Quick Note Bar")) {
+                } else if (id == R.id.action_toggle_quick_bar) {
                     toggleQuickNoteBar();
-                } else if (title.equals("Change Colors")) {
+                } else if (id == R.id.action_change_colors) {
                     showChangeColorsDialog();
-                } else if (title.equals("Change Font")) {
+                } else if (id == R.id.action_change_font) {
                     showFontDialog();
-                } else if (title.equals("Backup Data")) {
+                } else if (id == R.id.action_backup_data) {
                     showBackupDataDialog();
-                } else if (title.equals("Print")) {
+                } else if (id == R.id.action_print) {
                     showPrintDialog();
-                } else if (title.equals("About")) {
+                } else if (id == R.id.action_about) {
                     new AlertDialog.Builder(this)
                             .setTitle("About SAR Calendar")
                             .setMessage("SAR Calendar 2026\nVersion 1.0\nCreated with care.")
                             .setPositiveButton("OK", null)
                             .show();
-                } else if (title.equals("Exit")) {
-                    getOnBackPressedDispatcher().onBackPressed();
+                } else if (id == R.id.action_exit) {
+                    finish();
                 }
                 return true;
             });
@@ -376,6 +372,12 @@ public class MainActivity extends AppCompatActivity {
         } else if (QuickNoteNotificationService.ACTION_NOTE.equals(intent.getAction())) {
             currentDialogInput = null;
             showNewNoteDialog("");
+        } else if (QuickNoteNotificationService.ACTION_SECURE_BOX.equals(intent.getAction())) {
+            launchSecureBox(false);
+        } else if (QuickNoteNotificationService.ACTION_EXPENSES.equals(intent.getAction())) {
+            launchExpenses();
+        } else if (QuickNoteNotificationService.ACTION_SETTINGS.equals(intent.getAction())) {
+            findViewById(R.id.notificationSettingsButton).performClick();
         }
     }
 
@@ -768,11 +770,11 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton menuBtn = createActionButton(android.R.drawable.ic_menu_more, btnParams, v -> {
             android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
-            popup.getMenu().add(0, 1, 0, "Reminder").setIcon(android.R.drawable.ic_lock_idle_alarm);
-            popup.getMenu().add(0, 2, 0, "Edit").setIcon(android.R.drawable.ic_menu_edit);
-            popup.getMenu().add(0, 3, 0, "Share").setIcon(android.R.drawable.ic_menu_share);
-            popup.getMenu().add(0, 4, 0, "Archive").setIcon(android.R.drawable.ic_menu_save);
-            popup.getMenu().add(0, 5, 0, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+            popup.getMenu().add(0, 1, 0, "Reminder").setIcon(R.drawable.ic_menu_reminder_color);
+            popup.getMenu().add(0, 2, 0, "Edit").setIcon(R.drawable.ic_menu_edit_color);
+            popup.getMenu().add(0, 3, 0, "Share").setIcon(R.drawable.ic_menu_share_color);
+            popup.getMenu().add(0, 4, 0, "Archive").setIcon(R.drawable.ic_menu_archive_color);
+            popup.getMenu().add(0, 5, 0, "Delete").setIcon(R.drawable.ic_menu_trash_color);
 
             // Optional: force icons to show in PopupMenu
             try {
@@ -1652,14 +1654,14 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
-                    popup.getMenu().add(0, 1, 0, "Share").setIcon(android.R.drawable.ic_menu_share);
+                    popup.getMenu().add(0, 1, 0, "Share").setIcon(R.drawable.ic_menu_share_color);
                     
                     if (container == archiveHistoryContainer || container == deletedHistoryContainer) {
-                        popup.getMenu().add(0, 2, 0, "Restore").setIcon(android.R.drawable.ic_menu_revert);
-                        popup.getMenu().add(0, 3, 0, "Delete Permanently").setIcon(android.R.drawable.ic_menu_delete);
+                        popup.getMenu().add(0, 2, 0, "Restore").setIcon(R.drawable.ic_menu_restore_color);
+                        popup.getMenu().add(0, 3, 0, "Delete Permanently").setIcon(R.drawable.ic_menu_trash_color);
                     } else {
-                        popup.getMenu().add(0, 4, 0, "Archive").setIcon(android.R.drawable.ic_menu_save);
-                        popup.getMenu().add(0, 5, 0, "Delete").setIcon(android.R.drawable.ic_menu_delete);
+                        popup.getMenu().add(0, 4, 0, "Archive").setIcon(R.drawable.ic_menu_archive_color);
+                        popup.getMenu().add(0, 5, 0, "Delete").setIcon(R.drawable.ic_menu_trash_color);
                     }
 
                     try {

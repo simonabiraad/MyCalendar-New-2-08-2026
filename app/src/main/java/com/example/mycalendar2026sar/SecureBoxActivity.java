@@ -37,6 +37,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
@@ -141,6 +142,18 @@ public class SecureBoxActivity extends AppCompatActivity {
         refreshColors();
         setupAutoScroll();
         initSelectionBar();
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                new AlertDialog.Builder(SecureBoxActivity.this)
+                        .setTitle("Leave Page")
+                        .setMessage("Are you sure you want to leave this page?")
+                        .setPositiveButton("Yes", (dialog, which) -> finish())
+                        .setNegativeButton("No", null)
+                        .show();
+            }
+        });
 
         String action = getIntent().getStringExtra("action");
         if ("new_note".equals(action)) {

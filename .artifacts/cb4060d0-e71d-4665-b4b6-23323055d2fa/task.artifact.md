@@ -1,14 +1,4 @@
-- `[x]` Add AI Voice Assistant and Colorful Overflow Icons to Expenses
-    - `[x]` Create colorful assets for Overflow Menu
-        - `[x]` [NEW] [ic_menu_category_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_category_color.xml)
-        - `[x]` [NEW] [ic_menu_cash_in_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_cash_in_color.xml)
-        - `[x]` [NEW] [ic_menu_cash_out_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_cash_out_color.xml)
-        - `[x]` [NEW] [ic_menu_print_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_print_color.xml)
-        - `[x]` [NEW] [ic_menu_profile_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_profile_color.xml)
-        - `[x]` [NEW] [ic_menu_address_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_address_color.xml)
-        - `[x]` [NEW] [ic_menu_sort_asc_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_sort_asc_color.xml)
-        - `[x]` [NEW] [ic_menu_sort_desc_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_sort_desc_color.xml)
-    - `[x]` Update [activity_expenses.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/layout/activity_expenses.xml) to add AI Assistant button
-    - `[x]` Update [menu_expenses_overflow.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/menu/menu_expenses_overflow.xml) with new icons
-    - `[x]` Update [ExpensesActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/ExpensesActivity.java) for Voice Assistant and Icon visibility
-- `[x]` Verify build and UI functionality
+- [ ] Re-verify and ensure all colorful category logos exist
+- [ ] Refine `getCategoryLogo` and disable tinting in `CategoryActivity.java`
+- [ ] Refine `getCategoryLogo` and disable tinting in `ExpensesActivity.java`
+- [ ] Verify colorful logos are visible in both list and grid views

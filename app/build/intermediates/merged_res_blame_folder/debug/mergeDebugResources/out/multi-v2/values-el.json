@@ -4,24 +4,7 @@
             "outputFile": "com.example.mycalendar2026sar.app-mergeDebugResources-36:/values-el/values-el.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\004a38f509eb2f72e38caf41635163c6\\transformed\\core-1.18.0\\res\\values-el\\values-el.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,153,256,356,459,567,673,790",
-                        "endColumns": "97,102,99,102,107,105,116,100",
-                        "endOffsets": "148,251,351,454,562,668,785,886"
-                    },
-                    "to": {
-                        "startLines": "38,39,40,41,42,43,44,121",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "3543,3641,3744,3844,3947,4055,4161,11182",
-                        "endColumns": "97,102,99,102,107,105,116,100",
-                        "endOffsets": "3636,3739,3839,3942,4050,4156,4273,11278"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-el\\values-el.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-el\\values-el.xml",
                     "from": {
                         "startLines": "2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -40,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\2e23e8c54d2cd0149779551f2cfa4024\\transformed\\biometric-1.1.0\\res\\values-el\\values-el.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\2e23e8c54d2cd0149779551f2cfa4024\\transformed\\biometric-1.1.0\\res\\values-el\\values-el.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
@@ -57,7 +40,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\33fee84b61b5a48a6b52fa0d24343710\\transformed\\appcompat-1.6.1\\res\\values-el\\values-el.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\004a38f509eb2f72e38caf41635163c6\\transformed\\core-1.18.0\\res\\values-el\\values-el.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,256,356,459,567,673,790",
+                        "endColumns": "97,102,99,102,107,105,116,100",
+                        "endOffsets": "148,251,351,454,562,668,785,886"
+                    },
+                    "to": {
+                        "startLines": "38,39,40,41,42,43,44,121",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "3543,3641,3744,3844,3947,4055,4161,11182",
+                        "endColumns": "97,102,99,102,107,105,116,100",
+                        "endOffsets": "3636,3739,3839,3942,4050,4156,4273,11278"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\33fee84b61b5a48a6b52fa0d24343710\\transformed\\appcompat-1.6.1\\res\\values-el\\values-el.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

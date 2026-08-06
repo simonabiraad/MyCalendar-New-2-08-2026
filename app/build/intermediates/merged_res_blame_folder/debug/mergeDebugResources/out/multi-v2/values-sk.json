@@ -4,7 +4,7 @@
             "outputFile": "com.example.mycalendar2026sar.app-mergeDebugResources-36:/values-sk/values-sk.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\33fee84b61b5a48a6b52fa0d24343710\\transformed\\appcompat-1.6.1\\res\\values-sk\\values-sk.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\33fee84b61b5a48a6b52fa0d24343710\\transformed\\appcompat-1.6.1\\res\\values-sk\\values-sk.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -21,24 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\2e23e8c54d2cd0149779551f2cfa4024\\transformed\\biometric-1.1.0\\res\\values-sk\\values-sk.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,161,251,378,527,663,792,927,1060,1158,1293,1426",
-                        "endColumns": "105,89,126,148,135,128,134,132,97,134,132,113",
-                        "endOffsets": "156,246,373,522,658,787,922,1055,1153,1288,1421,1535"
-                    },
-                    "to": {
-                        "startLines": "50,51,54,55,56,57,58,59,60,61,62,63",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "4581,4687,4941,5068,5217,5353,5482,5617,5750,5848,5983,6116",
-                        "endColumns": "105,89,126,148,135,128,134,132,97,134,132,113",
-                        "endOffsets": "4682,4772,5063,5212,5348,5477,5612,5745,5843,5978,6111,6225"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-sk\\values-sk.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-sk\\values-sk.xml",
                     "from": {
                         "startLines": "2,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -57,7 +40,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\004a38f509eb2f72e38caf41635163c6\\transformed\\core-1.18.0\\res\\values-sk\\values-sk.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\2e23e8c54d2cd0149779551f2cfa4024\\transformed\\biometric-1.1.0\\res\\values-sk\\values-sk.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,161,251,378,527,663,792,927,1060,1158,1293,1426",
+                        "endColumns": "105,89,126,148,135,128,134,132,97,134,132,113",
+                        "endOffsets": "156,246,373,522,658,787,922,1055,1153,1288,1421,1535"
+                    },
+                    "to": {
+                        "startLines": "50,51,54,55,56,57,58,59,60,61,62,63",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "4581,4687,4941,5068,5217,5353,5482,5617,5750,5848,5983,6116",
+                        "endColumns": "105,89,126,148,135,128,134,132,97,134,132,113",
+                        "endOffsets": "4682,4772,5063,5212,5348,5477,5612,5745,5843,5978,6111,6225"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\004a38f509eb2f72e38caf41635163c6\\transformed\\core-1.18.0\\res\\values-sk\\values-sk.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

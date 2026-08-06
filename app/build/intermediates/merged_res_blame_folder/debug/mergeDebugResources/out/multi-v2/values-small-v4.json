@@ -4,7 +4,7 @@
             "outputFile": "com.example.mycalendar2026sar.app-mergeDebugResources-36:/values-small-v4/values-small-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\SAR\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-small-v4\\values-small-v4.xml",
+                    "source": "C:\\Users\\simon\\.gradle\\caches\\9.5.0\\transforms\\5ca83e9aa36a945ce90cd0ea50b90499\\transformed\\material-1.10.0\\res\\values-small-v4\\values-small-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

@@ -15,7 +15,7 @@ public class ReminderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String noteText = intent.getStringExtra("noteText");
-        
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "calendar_reminder_channel";
 

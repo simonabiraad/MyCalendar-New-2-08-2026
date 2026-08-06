@@ -106,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
     private int lastDeletedIndex;
     private String lastDeletedDateKey;
 
+    private boolean isVoiceCommandMode = false;
+
     private int voiceTargetIndex = -1;
     private SharedPreferences voiceTargetPrefs = null;
     private String voiceTargetDateKey = null;
@@ -1327,11 +1329,45 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak your note...");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, isVoiceCommandMode ? "Listening for command..." : "Speak your note...");
         try {
             voiceRecognitionLauncher.launch(intent);
         } catch (Exception e) {
             Toast.makeText(this, "Voice recognition not supported", Toast.LENGTH_SHORT).show();
+            isVoiceCommandMode = false;
+        }
+    }
+
+    private void processVoiceCommand(String command) {
+        String cmd = command.toLowerCase().trim();
+        Toast.makeText(this, "Command: " + command, Toast.LENGTH_SHORT).show();
+
+        if (cmd.contains("secure box") || cmd.contains("private notes") || cmd.contains("sticky notes")) {
+            launchSecureBox(false);
+        } else if (cmd.contains("new note") || cmd.contains("add note")) {
+            showNewNoteDialog("");
+        } else if (cmd.contains("expenses") || cmd.contains("money")) {
+            launchExpenses();
+        } else if (cmd.contains("history") || cmd.contains("all notes")) {
+            mainScrollView.post(() -> mainScrollView.smoothScrollTo(0, findViewById(R.id.remarkHistoryTitle).getTop()));
+        } else if (cmd.contains("archive") || cmd.contains("old notes")) {
+            mainScrollView.post(() -> mainScrollView.smoothScrollTo(0, findViewById(R.id.archiveHistoryTitle).getTop()));
+        } else if (cmd.contains("trash") || cmd.contains("deleted")) {
+            mainScrollView.post(() -> mainScrollView.smoothScrollTo(0, findViewById(R.id.deletedHistoryTitle).getTop()));
+        } else if (cmd.contains("color") || cmd.contains("theme")) {
+            showChangeColorsDialog();
+        } else if (cmd.contains("font") || cmd.contains("size")) {
+            showFontDialog();
+        } else if (cmd.contains("backup") || cmd.contains("restore")) {
+            showBackupDataDialog();
+        } else if (cmd.contains("print")) {
+            showPrintDialog();
+        } else if (cmd.contains("setting") || cmd.contains("notification")) {
+            findViewById(R.id.notificationSettingsButton).performClick();
+        } else if (cmd.contains("exit") || cmd.contains("close")) {
+            finish();
+        } else {
+            Toast.makeText(this, "Command not recognized: " + command, Toast.LENGTH_LONG).show();
         }
     }
 

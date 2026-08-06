@@ -2,7 +2,11 @@ package com.example.mycalendar2026sar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -61,6 +65,21 @@ public class ExpensesActivity extends AppCompatActivity {
 
     private int currentFilter = FILTER_ALL;
     private String currentSearchQuery = "";
+    private boolean isVoiceCommandMode = false;
+
+    private final ActivityResultLauncher<Intent> voiceRecognitionLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    ArrayList<String> matches = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (matches != null && !matches.isEmpty()) {
+                        String spokenText = matches.get(0);
+                        if (isVoiceCommandMode) {
+                            isVoiceCommandMode = false;
+                            processVoiceCommand(spokenText);
+                        }
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +103,9 @@ public class ExpensesActivity extends AppCompatActivity {
         monthlyButton = findViewById(R.id.monthlyButton);
         yearlyButton = findViewById(R.id.yearlyButton);
         NavigationView navigationView = findViewById(R.id.expensesNavigationView);
+        
+        // Disable icon tinting to show real colors
+        navigationView.setItemIconTintList(null);
 
         // --- Transaction list setup ---
         transactionDbHelper = TransactionDbHelper.getInstance(this);
@@ -111,11 +133,27 @@ public class ExpensesActivity extends AppCompatActivity {
             drawerLayout.openDrawer(GravityCompat.START);
         });
 
+        findViewById(R.id.aiAssistantButton).setOnClickListener(v -> {
+            isVoiceCommandMode = true;
+            startVoiceRecognition();
+        });
+
         topExpensesButton.setOnClickListener(v -> showAccountsDialog());
 
         findViewById(R.id.expensesOverflowButton).setOnClickListener(v -> {
             androidx.appcompat.widget.PopupMenu popup = new androidx.appcompat.widget.PopupMenu(this, v);
             popup.getMenuInflater().inflate(R.menu.menu_expenses_overflow, popup.getMenu());
+            
+            // Force icons to show
+            try {
+                java.lang.reflect.Field field = popup.getClass().getDeclaredField("mPopup");
+                field.setAccessible(true);
+                Object menuHelper = field.get(popup);
+                Class<?> classPopupHelper = Class.forName(menuHelper.getClass().getName());
+                java.lang.reflect.Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                setForceIcons.invoke(menuHelper, true);
+            } catch (Exception ignored) {}
+
             popup.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
                 String title = String.valueOf(item.getTitle());
@@ -133,6 +171,17 @@ public class ExpensesActivity extends AppCompatActivity {
         findViewById(R.id.expensesExportButton).setOnClickListener(v -> {
             androidx.appcompat.widget.PopupMenu popup = new androidx.appcompat.widget.PopupMenu(this, v);
             popup.getMenuInflater().inflate(R.menu.menu_expenses_export, popup.getMenu());
+
+            // Force icons to show
+            try {
+                java.lang.reflect.Field field = popup.getClass().getDeclaredField("mPopup");
+                field.setAccessible(true);
+                Object menuHelper = field.get(popup);
+                Class<?> classPopupHelper = Class.forName(menuHelper.getClass().getName());
+                java.lang.reflect.Method setForceIcons = classPopupHelper.getMethod("setForceShowIcon", boolean.class);
+                setForceIcons.invoke(menuHelper, true);
+            } catch (Exception ignored) {}
+
             popup.setOnMenuItemClickListener(item -> {
                 String title = String.valueOf(item.getTitle());
                 Toast.makeText(this, "Exporting to " + title + "...", Toast.LENGTH_SHORT).show();
@@ -931,6 +980,50 @@ public class ExpensesActivity extends AppCompatActivity {
                 .edit()
                 .putString("ActiveAccount", name)
                 .apply();
+    }
+
+    private void startVoiceRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Listening for Expenses command...");
+        try {
+            voiceRecognitionLauncher.launch(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Voice recognition not supported", Toast.LENGTH_SHORT).show();
+            isVoiceCommandMode = false;
+        }
+    }
+
+    private void processVoiceCommand(String command) {
+        String cmd = command.toLowerCase().trim();
+        Toast.makeText(this, "Command: " + command, Toast.LENGTH_SHORT).show();
+
+        if (cmd.contains("cash in") || cmd.contains("add income")) {
+            findViewById(R.id.cashInButton).performClick();
+        } else if (cmd.contains("cash out") || cmd.contains("add expense")) {
+            findViewById(R.id.cashOutButton).performClick();
+        } else if (cmd.contains("category") || cmd.contains("categories")) {
+            startActivity(new Intent(this, CategoryActivity.class));
+        } else if (cmd.contains("account")) {
+            showAccountsDialog();
+        } else if (cmd.contains("transfer")) {
+            startActivity(new Intent(this, TransferActivity.class));
+        } else if (cmd.contains("back") || cmd.contains("calendar")) {
+            finish();
+        } else if (cmd.contains("all")) {
+            findViewById(R.id.allButton).performClick();
+        } else if (cmd.contains("today") || cmd.contains("daily")) {
+            findViewById(R.id.dailyButton).performClick();
+        } else if (cmd.contains("weekly")) {
+            findViewById(R.id.weeklyButton).performClick();
+        } else if (cmd.contains("monthly")) {
+            findViewById(R.id.monthlyButton).performClick();
+        } else if (cmd.contains("print")) {
+            Toast.makeText(this, "Opening Print options", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Command not recognized: " + command, Toast.LENGTH_LONG).show();
+        }
     }
 
     private String getCategoryEmoji(String categoryName) {

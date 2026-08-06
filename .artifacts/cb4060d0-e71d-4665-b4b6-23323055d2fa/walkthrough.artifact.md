@@ -1,41 +1,81 @@
-# Walkthrough: Note Management and Multimedia Support
+# Walkthrough - Colorful Realistic Icons for Expenses Menu
 
-I have implemented a cleaner note list design and added full multimedia support to the Secure Box.
+I have completely overhauled the Expenses drawer menu with a set of custom, "real and colored" logos for every item.
 
----
+## Key Visual Enhancements
 
-## 1. Action Menu and Voice for Individual Notes
+### 🎨 16 Custom Colorful Logos
+Every item in the drawer menu now has its own unique, realistic multi-colored icon. For example:
+- **Rate Us**: A shiny **Golden Star**.
+- **Account Summary**: A green **Wallet**.
+- **Deleted Transactions**: A red **Trash Can**.
+- **Notebook**: An orange **Spiral Notebook**.
+- **Cash Calculator**: A green **Digital Calculator**.
 
-The note list is now cleaner and more functional with grouped actions and individual voice support.
+### ✨ Preserved Colors (No Grey Tint)
+I have updated the Expenses screen to ensure that Android does not automatically "tint" these icons to grey or black. This allows the full, vibrant colors of each logo to shine through exactly as designed.
 
-### Changes Made
-- **Grouped Actions**: Replaced multiple action icons with a single **"Three Dots"** menu in all note lists.
-- **Voice per Note**: Added a **Voice icon** next to each note text to quickly append spoken text.
-- **Unified Experience**: Applied these improvements to the main list, History, Archive, and Trash.
+## Changes Made
 
----
+### New Assets Created
+I created 16 new high-quality vector files in the [drawables](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable) folder, including:
+- [ic_menu_rate_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_rate_color.xml)
+- [ic_menu_acc_summary_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_acc_summary_color.xml)
+- [ic_menu_trash_color.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/drawable/ic_menu_trash_color.xml)
+- ...and 13 others.
 
-## 2. Multimedia Support in Secure Box
+### Updated Components
+- **Menu Layout**: [menu_expenses_drawer.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/menu/menu_expenses_drawer.xml) now links each item to its corresponding colored asset.
+- **Activity Logic**: [ExpensesActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/ExpensesActivity.java) now disables default icon tinting on the side menu.
 
-You can now attach photos, gallery images, and PDF pages directly to your sticky notes in the Secure Box.
-
-### Key Features
-- **New Attachment Icon**: A camera icon next to the voice button in the Secure Box.
-- **Triple Source Selection**: Choose from **Camera**, **Gallery**, or **PDF** with a newly designed, labeled menu.
-- **Built-in Image Editor**: Crop, draw, or add text to your attachments before saving them.
-- **Integrated Storage**: Attachments are converted to images and saved directly inside your sticky note cards.
-- **Enhanced Viewer**: Tapping a sticky note with an image now opens it in **full-screen view**, showing the actual picture instead of a text link.
-
-### Files Created/Modified
-- **Layouts**: [activity_secure_box.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/layout/activity_secure_box.xml), [dialog_media_picker.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/layout/dialog_media_picker.xml), [activity_image_editor.xml](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/layout/activity_image_editor.xml).
-- **Implementation**: [SecureBoxActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/SecureBoxActivity.java), [ImageEditorActivity.java](file:///C:/Users/simon/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/ImageEditorActivity.java).
-
-## How to Test Multimedia
-1. Open **Secure Box**.
-2. Tap the **Camera Icon** next to the voice button.
-3. Choose **PDF**. Select any document.
-4. Use the **Draw** tool in the editor to mark the image.
-5. Tap **OK** and verify the sticky note appears with your edited content!
+## How to Test
+1.  Open the **Expenses** screen.
+2.  Tap the **Drawer menu icon** (three horizontal lines) at the top left.
+3.  Observe the vibrant, multi-colored icons for every item in the list!
 
 > [!TIP]
-> The PDF feature automatically takes the first page of your document, making it perfect for quickly saving document snapshots as sticky notes.
+> The "Rate Us" star and "Cash Calculator" icons use metallic and digital colors to give a more "real" look to the software interface.
+
+---
+
+## 5. AI Voice Assistant and Colorful Overflow Icons for Expenses
+
+I have integrated the AI Voice Assistant into the Expenses section and updated the overflow menu with realistic, colorful logos.
+
+### 🎙 AI Voice Assistant in Expenses
+- **What's New**: A microphone button has been added next to the search bar in the Expenses screen.
+- **Commands**: You can now speak to manage your finances:
+    - *"Add cash in"* or *"Add income"*
+    - *"Show categories"*
+    - *"Go back to calendar"*
+    - *"Monthly expenses"* or *"Today's expenses"*
+
+### 🎨 Realistic Overflow Logos
+- **Visual Upgrade**: The menu next to the search bar (three dots) now features vibrant, multi-colored icons for every item by name:
+    - **Category**: Yellow folder.
+    - **Notes**: Orange notebook.
+    - **Cash In/Out**: Green and Red realistic money icons.
+    - **Print**: Teal professional printer.
+    - **Sort**: Blue directional arrows.
+
+### How to Test
+1.  Navigate to **Expenses**.
+2.  Tap the **🎙 Button** next to search and say: **"Go back to calendar"**.
+3.  Tap the **Three-Dot Menu** next to search and verify that **every list item** has a real, colored logo next to its name.
+
+---
+
+## 6. Clean Category Logos
+
+I have refined the category section by removing the background circles from the icons, giving them a cleaner and more modern "floating" appearance.
+
+### Changes Made
+- **Simplified Design**: Removed the grey circular background and green stroke from all category mini-logos.
+- **Improved Focus**: The emojis and icons now stand out directly against the dark background, making them easier to identify at a glance.
+- **Unified Layout**: Updated both the category selection chips and the full category list.
+
+### How to Test
+1.  Navigate to **Expenses**.
+2.  Tap on **Daily** or **All** and then tap the **Add Transaction** button (Cash In/Cash Out).
+3.  Look at the category selection grid—notice the icons no longer have circles around them.
+4.  Alternatively, go to the **Category** screen via the overflow menu to see the clean list view.

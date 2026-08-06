@@ -14,7 +14,6 @@
         android:id="@+id/categoryIconText"
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:background="@drawable/category_icon_bg"
         android:gravity="center"
         android:text="🍔"
         android:textSize="24sp" />

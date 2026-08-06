@@ -36,24 +36,21 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_send"
-            app:tint="@color/white" />
+            android:src="@drawable/ic_menu_transfer_color" />
 
         <ImageButton
             android:id="@+id/deleteSelectedBtn"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_delete"
-            app:tint="@color/white" />
+            android:src="@drawable/ic_menu_trash_color" />
 
         <ImageButton
             android:id="@+id/cancelSelectionBtn"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            app:tint="@color/white" />
+            android:src="@drawable/ic_menu_exit_color" />
     </LinearLayout>
 
     <TextView

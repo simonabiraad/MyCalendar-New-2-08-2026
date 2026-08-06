@@ -17,6 +17,10 @@
         android:icon="@drawable/ic_menu_accounts_color"
         android:title="Secure Box" />
     <item
+        android:id="@+id/action_expenses"
+        android:icon="@drawable/ic_menu_cash_in_color"
+        android:title="Expenses" />
+    <item
         android:id="@+id/action_change_password"
         android:icon="@drawable/ic_menu_password_color"
         android:title="Change Password" />

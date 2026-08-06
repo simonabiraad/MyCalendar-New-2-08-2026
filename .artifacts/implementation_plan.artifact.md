@@ -1,45 +1,39 @@
-# Implementation Plan - Category Password Protection in Secure Box
+# Implementation Plan - Add Expenses to Main Menu
 
-Add the ability to enable or disable password protection for individual categories within the Secure Box. This ensures that sensitive categories can be further protected beyond the main Secure Box access.
+The user wants to add an "Expenses" option to the main popup menu in `MainActivity`, which will open the Expenses section directly.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - Each category can independently have its password protection enabled or disabled.
-> - Disabling protection for a category will require authentication to prevent unauthorized changes.
-> - The password used is the same as the one configured in the main app settings (Custom Password or Phone Lock).
-> - If a category is protected, it will prompt for authentication every time it's selected.
+> - The new "Expenses" menu item will be placed after "Secure Box" in the menu.
+> - It will use a colorful icon (`ic_menu_cash_in_color`) to match the existing menu style.
 
 ## Proposed Changes
 
-### [Secure Box Activity]
+### [Menu]
 
-#### [MODIFY] [SecureBoxActivity.java](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/SecureBoxActivity.java)
-- Add `securityPrefs` field to store category security settings.
-- Initialize `securityPrefs` in `onCreate`.
-- Update `showCategoryOptionsDialog` to include a "Set Password" option.
-- Implement `showCategorySecurityToggleDialog(String key, String categoryName)` to allow users to toggle protection (Yes/No).
-- Implement `verifyThenDisableCatPassword(String categoryName, String prefKey)` to authenticate before disabling category protection.
-- Implement `verifyCatAccess(String key, int color)` to handle authentication when a protected category is clicked.
-- Refactor `selectCategory` to check for protection and call `verifyCatAccess` if needed.
-- Move the actual category selection logic to a new `performSelectCategory(String key, int color)` method.
-- Add necessary biometric and authentication imports and logic.
+#### [MODIFY] [main_popup_menu.xml](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/res/menu/main_popup_menu.xml)
+- Add a new menu item for Expenses:
+  ```xml
+  <item
+      android:id="@+id/action_expenses"
+      android:icon="@drawable/ic_menu_cash_in_color"
+      android:title="Expenses" />
+  ```
+
+### [MainActivity]
+
+#### [MODIFY] [MainActivity.java](file:///C:/Users/SAR/StudioProjects/MyCalendar-New-2-08-2026/app/src/main/java/com/example/mycalendar2026sar/MainActivity.java)
+- In the `OnMenuItemClickListener` for the main menu, add a branch to handle `R.id.action_expenses`:
+  ```java
+  else if (id == R.id.action_expenses) {
+      launchExpenses();
+  }
+  ```
 
 ## Verification Plan
 
 ### Manual Verification
-1.  **Enable Category Password:**
-    - Open Secure Box.
-    - Long-press a category button (e.g., "Family").
-    - Select **Set Password**.
-    - Choose **Yes (Require Password)**.
-    - Select another category, then select "Family" again. Verify it prompts for a password.
-2.  **Disable Category Password:**
-    - Long-press the protected category ("Family").
-    - Select **Set Password**.
-    - Choose **No (No Password)**.
-    - Verify it prompts for the current password/biometric *before* disabling.
-    - After successful authentication, verify that selecting the category no longer prompts for a password.
-3.  **Independent Toggles:**
-    - Enable protection for one category and disable it for another.
-    - Verify they behave independently.
+1.  Open the app and tap the main menu button (top-left).
+2.  Verify that "Expenses" is now an option in the list with a colorful icon.
+3.  Tap "Expenses" and verify that the Expenses section opens directly.

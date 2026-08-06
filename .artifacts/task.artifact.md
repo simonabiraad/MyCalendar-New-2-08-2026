@@ -1,14 +1,9 @@
-# Task: Category Password Protection in Secure Box
+# Task: Add Expenses to Main Menu
 
-- [x] Update `SecureBoxActivity.java`
-    - [x] Add imports for Biometric and authentication
-    - [x] Add `securityPrefs` field and initialize it
-    - [x] Update `showCategoryOptionsDialog` with "Set Password"
-    - [x] Implement `showCategorySecurityToggleDialog`
-    - [x] Implement `verifyThenDisableCatPassword`
-    - [x] Implement `verifyCatAccess`
-    - [x] Refactor `selectCategory` and implement `performSelectCategory`
+- [x] Update `main_popup_menu.xml`
+    - [x] Add "Expenses" item with `ic_menu_cash_in_color` icon
+- [x] Update `MainActivity.java`
+    - [x] Handle `R.id.action_expenses` in menu click listener
 - [x] Verification
-    - [x] Test enabling protection for a category
-    - [x] Test disabling protection (verify auth requirement)
-    - [x] Test independent behavior for different categories
+    - [x] Open main menu and check for "Expenses" item
+    - [x] Click "Expenses" and verify it opens the Expenses section

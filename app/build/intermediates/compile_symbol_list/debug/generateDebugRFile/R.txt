@@ -116,6 +116,7 @@ int id action_date_desc 0x0
 int id action_date_range 0x0
 int id action_excel 0x0
 int id action_exit 0x0
+int id action_expenses 0x0
 int id action_name 0x0
 int id action_new_note 0x0
 int id action_new_sticky_note 0x0
@@ -193,6 +194,7 @@ int id cashOutTotalText 0x0
 int id categoryBackButton 0x0
 int id categoryExpenseToggle 0x0
 int id categoryIconImg 0x0
+int id categoryIconText 0x0
 int id categoryIncomeToggle 0x0
 int id categoryItemContainer 0x0
 int id categoryName 0x0

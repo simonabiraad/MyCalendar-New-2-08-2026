@@ -290,6 +290,8 @@ public class MainActivity extends AppCompatActivity {
                     launchSecureBox(true);
                 } else if (id == R.id.action_secure_box) {
                     launchSecureBox(false);
+                } else if (id == R.id.action_expenses) {
+                    launchExpenses();
                 } else if (id == R.id.action_change_password) {
                     showChangePasswordDialog();
                 } else if (id == R.id.action_notification_settings) {
@@ -773,6 +775,7 @@ public class MainActivity extends AppCompatActivity {
             popup.getMenu().add(0, 1, 0, "Reminder").setIcon(R.drawable.ic_menu_reminder_color);
             popup.getMenu().add(0, 2, 0, "Edit").setIcon(R.drawable.ic_menu_edit_color);
             popup.getMenu().add(0, 3, 0, "Share").setIcon(R.drawable.ic_menu_share_color);
+            popup.getMenu().add(0, 6, 0, "Move").setIcon(R.drawable.ic_menu_transfer_color);
             popup.getMenu().add(0, 4, 0, "Archive").setIcon(R.drawable.ic_menu_archive_color);
             popup.getMenu().add(0, 5, 0, "Delete").setIcon(R.drawable.ic_menu_trash_color);
 
@@ -812,6 +815,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if (id == 4) archiveNote(index);
                 else if (id == 5) deleteRemark(index, sourcePrefs);
+                else if (id == 6) showMoveDatePicker(remarkText, index, sourcePrefs, currentDateKey);
                 return true;
             });
             popup.show();
@@ -1439,6 +1443,105 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    private void showMoveDatePicker(String remarkText, int index, SharedPreferences sourcePrefs, String oldDateKey) {
+        Calendar cal = Calendar.getInstance();
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Date d = sdf.parse(oldDateKey);
+            if (d != null) cal.setTime(d);
+        } catch (Exception ignored) {}
+
+        new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+            Calendar target = Calendar.getInstance();
+            target.set(year, month, dayOfMonth);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String newDateKey = sdf.format(target.getTime());
+
+            if (newDateKey.equals(oldDateKey)) {
+                Toast.makeText(this, "Already on this date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            performMoveNote(remarkText, index, sourcePrefs, oldDateKey, newDateKey);
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void performMoveNote(String remarkText, int index, SharedPreferences sourcePrefs, String oldDateKey, String newDateKey) {
+        // 1. Remove from old date
+        String oldData = sourcePrefs.getString(oldDateKey, "");
+        if (oldData.isEmpty()) return;
+        List<String> oldList = new ArrayList<>(Arrays.asList(oldData.split("\n")));
+        if (index >= 0 && index < oldList.size()) {
+            oldList.remove(index);
+            if (oldList.isEmpty()) sourcePrefs.edit().remove(oldDateKey).apply();
+            else sourcePrefs.edit().putString(oldDateKey, String.join("\n", oldList)).apply();
+        }
+
+        // 2. Add to new date
+        String newData = sourcePrefs.getString(newDateKey, "");
+        String updatedNewData = newData.isEmpty() ? remarkText : newData + "\n" + remarkText;
+        sourcePrefs.edit().putString(newDateKey, updatedNewData).apply();
+
+        // 3. Migrate Reminder if exists
+        String oldReminderKey = oldDateKey + "_" + remarkText;
+        String savedTime = reminderPreferences.getString(oldReminderKey, null);
+        if (savedTime != null) {
+            // Cancel old
+            int oldRequestCode = oldReminderKey.hashCode();
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, ReminderReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, oldRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            if (alarmManager != null) alarmManager.cancel(pendingIntent);
+            reminderPreferences.edit().remove(oldReminderKey).apply();
+
+            // Calculate new time
+            try {
+                SimpleDateFormat sdfFull = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                Date oldDateTime = sdfFull.parse(savedTime);
+                if (oldDateTime != null) {
+                    Calendar oldCal = Calendar.getInstance();
+                    oldCal.setTime(oldDateTime);
+
+                    SimpleDateFormat sdfDay = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    Date newDate = sdfDay.parse(newDateKey);
+                    if (newDate != null) {
+                        Calendar newCal = Calendar.getInstance();
+                        newCal.setTime(newDate);
+                        newCal.set(Calendar.HOUR_OF_DAY, oldCal.get(Calendar.HOUR_OF_DAY));
+                        newCal.set(Calendar.MINUTE, oldCal.get(Calendar.MINUTE));
+                        newCal.set(Calendar.SECOND, 0);
+
+                        setReminder(newCal, remarkText); // This handles the new date key internally
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // 4. Refresh UI
+        loadRemarksForSelectedDate();
+        updateRemarkHistory();
+        if (sourcePrefs == archivePreferences) archiveHistoryContainer.removeAllViews(); // Will be reloaded if expanded
+        if (sourcePrefs == deletedPreferences) deletedHistoryContainer.removeAllViews();
+        
+        // Full refresh of history if they are expanded
+        if (remarkHistoryContainer.getVisibility() == View.VISIBLE) {
+            remarkHistoryContainer.removeAllViews();
+            loadHistoryFromPrefs(sharedPreferences, remarkHistoryContainer, R.string.no_notes_saved, colorPrefs.getInt("color_main_theme", getColor(R.color.light_green)));
+        }
+        if (archiveHistoryContainer.getVisibility() == View.VISIBLE) {
+            archiveHistoryContainer.removeAllViews();
+            loadHistoryFromPrefs(archivePreferences, archiveHistoryContainer, R.string.no_archived_notes, colorPrefs.getInt("color_archive", Color.YELLOW));
+        }
+        if (deletedHistoryContainer.getVisibility() == View.VISIBLE) {
+            deletedHistoryContainer.removeAllViews();
+            loadHistoryFromPrefs(deletedPreferences, deletedHistoryContainer, R.string.no_deleted_notes, colorPrefs.getInt("color_deleted", getColor(R.color.chili_red)));
+        }
+
+        adapter.notifyDataSetChanged();
+        updateAllWidgets();
+        Toast.makeText(this, "Moved to " + newDateKey, Toast.LENGTH_SHORT).show();
+    }
+
     private void updateRemarkHistory() {
         remarkHistoryContainer.removeAllViews();
         archiveHistoryContainer.removeAllViews();
@@ -1655,6 +1758,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
                     popup.getMenu().add(0, 1, 0, "Share").setIcon(R.drawable.ic_menu_share_color);
+                    popup.getMenu().add(0, 6, 0, "Move").setIcon(R.drawable.ic_menu_transfer_color);
                     
                     if (container == archiveHistoryContainer || container == deletedHistoryContainer) {
                         popup.getMenu().add(0, 2, 0, "Restore").setIcon(R.drawable.ic_menu_restore_color);
@@ -1687,6 +1791,8 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(Intent.createChooser(sendIntent, "Share Note via"));
                                 } else shareNoteAsIcs(noteText, currentLoopDateKey);
                             }).show();
+                        } else if (itemId == 6) {
+                            showMoveDatePicker(noteText, index, prefs, currentLoopDateKey);
                         } else if (itemId == 2) {
                             restoreSingleNote(currentLoopDateKey, index, prefs);
                         } else if (itemId == 3) {

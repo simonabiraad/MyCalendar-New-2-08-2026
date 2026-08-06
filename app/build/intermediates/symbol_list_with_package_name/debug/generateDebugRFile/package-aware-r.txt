@@ -117,6 +117,7 @@ id action_date_desc
 id action_date_range
 id action_excel
 id action_exit
+id action_expenses
 id action_name
 id action_new_note
 id action_new_sticky_note
@@ -194,6 +195,7 @@ id cashOutTotalText
 id categoryBackButton
 id categoryExpenseToggle
 id categoryIconImg
+id categoryIconText
 id categoryIncomeToggle
 id categoryItemContainer
 id categoryName

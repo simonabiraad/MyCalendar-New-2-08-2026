@@ -85,7 +85,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     private void updateList() {
         List<CategoryItem> items = new ArrayList<>();
-        items.add(new CategoryItem("Other", R.drawable.ic_cat_other_color)); // Add Other at top
+        items.add(new CategoryItem("Other", "➕")); // Add Other at top
         if (isExpenseView) {
             addExpenseItems(items);
         } else {
@@ -179,7 +179,7 @@ public class CategoryActivity extends AppCompatActivity {
         };
         for (int id : resIds) {
             String name = getString(id);
-            items.add(new CategoryItem(name, getCategoryLogo(name)));
+            items.add(new CategoryItem(name, getCategoryEmoji(name)));
         }
     }
 
@@ -190,48 +190,90 @@ public class CategoryActivity extends AppCompatActivity {
         };
         for (int id : resIds) {
             String name = getString(id);
-            items.add(new CategoryItem(name, getCategoryLogo(name)));
+            items.add(new CategoryItem(name, getCategoryEmoji(name)));
         }
     }
 
-    private int getCategoryLogo(String name) {
+    private String getCategoryEmoji(String name) {
         String lower = name.toLowerCase();
-        if (lower.contains("salary") || lower.contains("bonus") || lower.contains("income") || lower.contains("investment")) 
-            return R.drawable.ic_cat_money_color;
-        if (lower.contains("business")) return R.drawable.ic_cat_business_color;
-        if (lower.contains("food") || lower.contains("fast food") || lower.contains("drinks") || lower.contains("fruits") || lower.contains("restaurant") || lower.contains("milk")) 
-            return R.drawable.ic_cat_food_color;
-        if (lower.contains("groceries")) return R.drawable.ic_cat_grocery_color;
-        if (lower.contains("rent") || lower.contains("home") || lower.contains("house")) return R.drawable.ic_cat_rent_color;
-        if (lower.contains("bills") || lower.contains("taxes") || lower.contains("toll") || lower.contains("emi") || lower.contains("card") || lower.contains("insurance")) 
-            return R.drawable.ic_cat_bill_color;
-        if (lower.contains("fuel") || lower.contains("gas")) return R.drawable.ic_cat_fuel_color;
-        if (lower.contains("transport") || lower.contains("taxi") || lower.contains("car") || lower.contains("bike") || lower.contains("rickshaw") || lower.contains("driver")) 
-            return R.drawable.ic_cat_transport_color;
-        if (lower.contains("medicine") || lower.contains("health") || lower.contains("fitness")) return R.drawable.ic_cat_health_color;
-        if (lower.contains("shopping") || lower.contains("clothes") || lower.contains("gifts") || lower.contains("stationery") || lower.contains("grooming") || lower.contains("pet")) 
-            return R.drawable.ic_cat_shop_color;
-        if (lower.contains("entertainment") || lower.contains("hobby") || lower.contains("festivals") || lower.contains("party") || lower.contains("social")) 
-            return R.drawable.ic_cat_ent_color;
-        if (lower.contains("mobile") || lower.contains("internet") || lower.contains("cable") || lower.contains("phone")) 
-            return R.drawable.ic_cat_mobile_color;
-        if (lower.contains("electricity") || lower.contains("water") || lower.contains("repair") || lower.contains("maintenance") || lower.contains("utility")) 
-            return R.drawable.ic_cat_utility_color;
-        if (lower.contains("education") || lower.contains("kids") || lower.contains("toys") || lower.contains("baby")) 
-            return R.drawable.ic_cat_edu_color;
-        if (lower.contains("travel") || lower.contains("vacation") || lower.contains("tickets") || lower.contains("hotel") || lower.contains("air")) 
-            return R.drawable.ic_cat_travel_color;
         
-        return R.drawable.ic_cat_other_color;
+        // Income
+        if (lower.contains("salary")) return "💰";
+        if (lower.contains("bonus")) return "🎁";
+        if (lower.contains("business")) return "💼";
+        if (lower.contains("investment")) return "📈";
+        if (lower.contains("income")) return "💵";
+        
+        // Expenses
+        if (lower.contains("air tickets") || lower.contains("flight")) return "✈️";
+        if (lower.contains("auto rickshaw")) return "🛺";
+        if (lower.contains("bike")) return "🏍️";
+        if (lower.contains("bills")) return "🧾";
+        if (lower.contains("cable")) return "📺";
+        if (lower.contains("car insurance")) return "🛡️";
+        if (lower.contains("car")) return "🚗";
+        if (lower.contains("card fee")) return "💳";
+        if (lower.contains("cigarette")) return "🚬";
+        if (lower.contains("clothes")) return "👕";
+        if (lower.contains("drinks")) return "🍺";
+        if (lower.contains("driver")) return "👨‍✈️";
+        if (lower.contains("durables")) return "📺";
+        if (lower.contains("education")) return "📚";
+        if (lower.contains("electricity")) return "💡";
+        if (lower.contains("emi")) return "💸";
+        if (lower.contains("entertainment")) return "🎬";
+        if (lower.contains("fast food")) return "🍕";
+        if (lower.contains("festivals")) return "🏮";
+        if (lower.contains("fitness")) return "🏋️";
+        if (lower.contains("fruits")) return "🍎";
+        if (lower.contains("fuel")) return "⛽";
+        if (lower.contains("furniture")) return "🛋️";
+        if (lower.contains("gas")) return "🔥";
+        if (lower.contains("gifts")) return "🎁";
+        if (lower.contains("groceries")) return "🛒";
+        if (lower.contains("health insurance")) return "🏥";
+        if (lower.contains("health")) return "💊";
+        if (lower.contains("hobby")) return "🎨";
+        if (lower.contains("home insurance")) return "🏡";
+        if (lower.contains("house hold")) return "🏠";
+        if (lower.contains("insurance")) return "🛡️";
+        if (lower.contains("internet")) return "🌐";
+        if (lower.contains("kids")) return "👶";
+        if (lower.contains("laundry")) return "🧺";
+        if (lower.contains("maid")) return "🧹";
+        if (lower.contains("medicine")) return "💊";
+        if (lower.contains("milk")) return "🥛";
+        if (lower.contains("mobile")) return "📱";
+        if (lower.contains("parking")) return "🅿️";
+        if (lower.contains("party")) return "🥳";
+        if (lower.contains("grooming")) return "✂️";
+        if (lower.contains("pet")) return "🐾";
+        if (lower.contains("rent")) return "🔑";
+        if (lower.contains("repair")) return "🛠️";
+        if (lower.contains("restaurant") || lower.contains("food")) return "🍔";
+        if (lower.contains("savings")) return "🐷";
+        if (lower.contains("shopping")) return "🛍️";
+        if (lower.contains("social")) return "🤝";
+        if (lower.contains("stationery")) return "✏️";
+        if (lower.contains("taxes")) return "🏛️";
+        if (lower.contains("taxi")) return "🚕";
+        if (lower.contains("toiletries")) return "🧻";
+        if (lower.contains("toll")) return "🛣️";
+        if (lower.contains("toys")) return "🧸";
+        if (lower.contains("transport")) return "🚌";
+        if (lower.contains("vacation")) return "🌴";
+        if (lower.contains("water")) return "💧";
+        
+        return "📝";
     }
 
     private static class CategoryItem {
         String name;
-        int logoRes;
+        String emoji;
 
-        CategoryItem(String name, int logoRes) {
+        CategoryItem(String name, String emoji) {
             this.name = name;
-            this.logoRes = logoRes;
+            this.emoji = emoji;
         }
     }
 
@@ -275,8 +317,7 @@ public class CategoryActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             CategoryItem item = filteredItems.get(position);
             holder.nameText.setText(item.name);
-            holder.logoImg.setImageResource(item.logoRes);
-            holder.logoImg.setImageTintList(null); // Ensure real colors are shown
+            holder.emojiText.setText(item.emoji);
             holder.itemView.setOnClickListener(v -> listener.onCategoryClick(item));
         }
 
@@ -287,12 +328,12 @@ public class CategoryActivity extends AppCompatActivity {
 
         static class ViewHolder extends RecyclerView.ViewHolder {
             TextView nameText;
-            ImageView logoImg;
+            TextView emojiText;
 
             ViewHolder(View view) {
                 super(view);
                 nameText = view.findViewById(R.id.categoryName);
-                logoImg = view.findViewById(R.id.categoryIconImg);
+                emojiText = view.findViewById(R.id.categoryIconText);
             }
         }
     }
